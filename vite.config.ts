@@ -40,12 +40,12 @@ const viteConfig = defineConfig((mode) => {
       open: false,
       hmr: true,
       proxy: {
-        "/apiv1": {
-          target: `${env.VITE_PROD_API_BASE}/apiv1`,
-          ws: true,
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/apiv1/, ""),
-        },
+        // "/apiv1": {
+        //   target: `${env.VITE_PROD_API_BASE}/apiv1`,
+        //   ws: true,
+        //   changeOrigin: true,
+        //   rewrite: (path) => path.replace(/^\/apiv1/, ""),
+        // },
         // "/uploads": {
         //   target: `${env.VITE_API_URL}/uploads`,
         //   changeOrigin: true,
