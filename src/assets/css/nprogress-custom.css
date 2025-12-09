@@ -1,0 +1,14 @@
+/* Progress bar color */
+#nprogress .bar {
+  background: red !important; /* change to any color you want */
+}
+
+/* Glow / pulse effect */
+#nprogress .peg {
+  box-shadow: 0 0 10px red, 0 0 5px red !important;
+}
+
+/* Optional: thickness */
+#nprogress .bar {
+  height: 4px !important; /* default is 2px */
+}
