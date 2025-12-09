@@ -6,9 +6,15 @@ import qs from "qs";
 import { useStore } from "@/stores";
 import { Session } from "@/utils/storage";
 import { Notify } from "@/stores/notification";
+import { API_ENDPOINT } from "@/bootstrap";
+import router from "@/router";
+
+// compute a base once, from bootstrap/env
+const baseFromBootstrap =
+  API_ENDPOINT || import.meta.env.VITE_PROD_API_BASE || "";
 
 const service: AxiosInstance = axios.create({
-  baseURL: `${import.meta.env.VITE_PROD_API_BASE}/apiv1`,
+  baseURL: baseFromBootstrap ? `${baseFromBootstrap}/apiv1` : "/apiv1",
   timeout: 10000,
   headers: { "Content-Type": "application/json" },
   paramsSerializer: {
@@ -22,6 +28,9 @@ const service: AxiosInstance = axios.create({
 service.interceptors.request.use(
   (config) => {
     const store = useStore();
+    if (store.apiEndPoint) {
+      config.baseURL = store.apiEndPoint + "/apiv1";
+    }
 
     appendToken(config);
     const client = "pwa";
@@ -83,20 +92,42 @@ service.interceptors.response.use(
   },
   (error) => {
     // Do something with the response error
-    if (error.message.indexOf("timeout") != -1) {
-      Notify.error("网络超时");
-    } else if (error.message == "Network Error") {
-      Notify.error("网络连接错误");
-    } else {
-      if (error.status === 401) {
-        Session.clear(); // Clear all temporary browser caches
-        window.location.reload();
-        Notify.error("登录状态已过期，请重新登录");
+    const currentRoute = router.currentRoute.value;
+    const status = error.response?.status;
+    const isNetworkError =
+      error.message === "Network Error" ||
+      error.code === "ECONNABORTED" ||
+      !error.response; // no response = CORS/fetch failed/host down
+
+    // 1) Handle auth error (401) separately
+    if (status === 401) {
+      Session.clear();
+      Notify.error("登录状态已过期，请重新登录");
+      // optionally redirect to login instead of reload:
+      // router.push({ name: "Login" });
+      window.location.reload();
+      return Promise.reject(error);
+    }
+
+    // 2) For network / CORS / unreachable host, show toast + redirect
+    if (isNetworkError) {
+      Notify.error("服务器连接失败，请稍后重试");
+      if (currentRoute.name !== "notFound") {
+        router.push({
+          name: "notFound",
+          query: { from: currentRoute.fullPath },
+        });
       }
 
-      if (error.response?.data) Notify.info(error.response.statusText);
-      else Notify.error("接口路径找不到");
+      return Promise.reject(error);
     }
+    // 4) Other errors: keep your previous behavior
+    if (error.response?.data) {
+      Notify.info(error.response.statusText || "请求出错");
+    } else {
+      Notify.error("接口路径找不到");
+    }
+
     return Promise.reject(error);
   }
 );

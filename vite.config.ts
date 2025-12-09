@@ -10,6 +10,9 @@ import vueDevTools from "vite-plugin-vue-devtools";
 const viteConfig = defineConfig((mode) => {
   const env = loadEnv(mode.mode, process.cwd());
   return {
+    build: {
+      chunkSizeWarningLimit: 2000,
+    },
     optimizeDeps: {
       include: ["fslightbox-vue"],
     },
@@ -18,7 +21,11 @@ const viteConfig = defineConfig((mode) => {
         features: { propsDestructure: true },
       }),
 
-      Components({ dts: "./src/components.d.ts", types: [] }),
+      Components({
+        dts: "./src/components.d.ts",
+        types: [],
+        dirs: ["src/components/global"],
+      }),
       AutoImport({
         imports: ["vue", "pinia", VueRouterAutoImports],
         dts: "src/auto-imports.d.ts",

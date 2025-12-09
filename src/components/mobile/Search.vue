@@ -71,7 +71,7 @@ const homePage = () => {
       <v-img src="/logo.png" width="80" alt="Logo"></v-img>
     </v-btn>
     <v-text-field v-model="store.search" hide-details density="compact" variant="outlined" placeholder="请输入搜索内容"
-      append-inner-icon="mdi-magnify" rounded="xl" color="primary" max-width="400px" @focus="onFocusSearch"
+      append-inner-icon="mdi-magnify" rounded="xl" color="warning" max-width="400px" @focus="onFocusSearch"
       @keydown.enter="onFocusSearch" />
     <div class="d-flex align-center ga-2">
       <v-fab elevation="1" icon="mdi-weather-night" color="surface" density="comfortable" @click="toggleDark" />
