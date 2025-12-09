@@ -8,7 +8,7 @@ import { Session } from "@/utils/storage";
 import { Notify } from "@/stores/notification";
 
 const service: AxiosInstance = axios.create({
-  baseURL: `/apiv1`,
+  baseURL: `${import.meta.env.VITE_PROD_API_BASE}/apiv1`,
   timeout: 10000,
   headers: { "Content-Type": "application/json" },
   paramsSerializer: {
