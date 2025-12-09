@@ -1,3 +1,4 @@
+// routes.ts
 import { type RouteRecordRaw } from "vue-router";
 
 // Extend RouteMeta interface
@@ -19,9 +20,8 @@ export const CommonRoutes: Array<RouteRecordRaw> = [
   {
     path: "/",
     name: "Explore",
-    // make sure the import path matches the real filesystem casing:
     component: () => import("@/Layouts/index.vue"),
-    // redirect by route name (safer)
+    // you *can* keep redirect if you want "/" → Article
     redirect: { name: "Article" },
     children: [
       {
@@ -78,31 +78,27 @@ export const CommonRoutes: Array<RouteRecordRaw> = [
           isKeepAlive: true,
         },
       },
+
+      // ✅ 404 as a *child* under the layout
+      {
+        path: ":pathMatch(.*)*",
+        name: "notFound",
+        component: () => import("@/pages/error/404.vue"),
+        meta: {
+          title: "Not found 404!",
+          isHide: true,
+        },
+      },
     ],
   },
 ];
 
 export const AuthorizeRoutes: Array<RouteRecordRaw> = [
-  // add protected routes here, example:
-  // {
-  //   path: "/chat",
-  //   name: "Chat",
-  //   component: () => import("@/pages/chat/ChatPage.vue"),
-  //   meta: { title: "ChatPage", isAuth: true },
-  // },
+  // protected routes here if needed
 ];
 
+// You can keep /401 as a separate top-level route if you want:
 export const ErrorRoutes: Array<RouteRecordRaw> = [
-  {
-    // correct catch-all pattern for vue-router 4
-    path: "/:pathMatch(.*)*",
-    name: "notFound",
-    component: () => import("@/pages/error/404.vue"),
-    meta: {
-      title: "Not found 404!",
-      isHide: true,
-    },
-  },
   {
     path: "/401",
     name: "noPower",
