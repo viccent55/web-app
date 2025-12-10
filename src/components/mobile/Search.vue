@@ -33,7 +33,7 @@ const categories = computed(() => {
 
 
 const clickMenuItem = (item: Record<string, string>) => {
-  window.location.href = `/category/${item.value}`;
+  router.push(`/category/${item.value}`)
 };
 
 const onOpenPage = () => {

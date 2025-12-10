@@ -10,7 +10,7 @@ import { PERMISSION } from "@/common/permision";
 import useVaraible from "@/composables/useVariable";
 import { screenMode } from "@/hooks/useScreenMode";
 
-const { router, store, storeUser } = useVaraible();
+const { router, store, storeUser, route } = useVaraible();
 const { configuration } = storeToRefs(store);
 
 const clickNavigationItem = (item: NavigationItem) => {
@@ -27,7 +27,7 @@ const clickNavigationItem = (item: NavigationItem) => {
   }
 };
 
-const indexChannel = ref<string>("001");
+const indexChannel = computed(() => route.params?.id as string || "001");
 const categories = computed(() => [
   { name: "发现", value: "001" },
   ...(configuration.value.categories || []).map((item: EmptyObjectType) => ({

@@ -32,9 +32,8 @@ const itemClick = (app: any) => {
     <!-- Channel Bar -->
     <v-slide-group ref="group" center-active v-model="selected" show-arrows class="flex-grow-1  pb-0 custom-slide">
       <v-slide-group-item v-for="(item, index) in items" :key="index" :value="item.value">
-
-        <v-btn :color="selected == item.value ? 'primary' : undefined"
-          :variant="selected == item.value ? 'flat' : 'text'" rounded="xl" class="mt-1 mr-2 px-3 px-md-4"
+        <v-btn :color="activeValue == item.value ? 'primary' : undefined"
+          :variant="activeValue == item.value ? 'flat' : 'text'" rounded="xl" class="mt-1 mr-2 px-3 px-md-4"
           @click="onNavigate(item)" :density="screenMode === 'phone' ? 'compact' : 'default'">
           <span class="text-xs pa-0 ma-0 text-body-2 ">{{ item.name }}</span>
         </v-btn>
