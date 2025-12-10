@@ -84,7 +84,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-container class="px-0" fluid>
+  <v-container class="py-0" fluid>
     <v-card color="transparent" flat :loading="state.loading">
       <v-row :no-gutters="screenMode === 'phone'">
         <!-- Each Article Card -->

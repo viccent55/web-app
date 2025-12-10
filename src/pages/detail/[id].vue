@@ -12,9 +12,13 @@ import {
   follow,
   reply,
   detail,
-  comments,
+  getComments,
 } from "@/service/explore";
 import { openPage } from "@/service";
+import useVariable from "@/composables/useVariable";
+import useSnackbar from "@/composables/useSnackbar";
+import { generateCode } from '@/utils/toolsValidate'
+import { screenMode } from "@/hooks/useScreenMode";
 
 const bottomRef = useTemplateRef("bottomActions");
 
@@ -23,42 +27,34 @@ const state = reactive({
   comments: [] as EmptyObjectType[],
   loading: false,
 });
-const { store, onCopy, route, isMobile, storeUser } = useVariable();
+const { store, onCopy, route, storeUser } = useVariable();
 const snackbar = useSnackbar();
 
-const _id = computed(() => route.params.id);
+const _id = computed(() => route.params.id as string);
 
-const getComments = async () => {
-  const response = await comments({ id: _id.value });
+const getAllComments = async () => {
+  const response = await getComments(_id.value);
   if (response.data) {
     state.comments = response.data;
   }
 };
-const { data: fetchedData, pending } = await useAsyncData(
-  `detail-feed-${route.params.id}`,
-  async () => {
-    try {
-      const request = {
-        id: route.params.id as string,
-        code: !storeUser.visitCode ? generateCode() : storeUser.visitCode,
-      };
-      const response = await detail(request);
-      return response.data || {};
-    } catch (err) {
-      console.error("fetchDetail failed:", err);
-      return {};
+const getDetail = async () => {
+  try {
+    const request = {
+      id: route.params.id as string,
+      code: !storeUser.visitCode ? generateCode() : storeUser.visitCode,
+    };
+    const response = await detail(request);
+    if (response.data) {
+      state.data = response.data;
+      getAllComments();
     }
-  },
-  { watch: [() => route.params.id] }
-);
+  } catch (err) {
+    console.error("fetchDetail failed:", err);
+    return {};
+  }
+};
 
-// Assign the fetched data to the reactive state
-if (fetchedData.value) {
-  state.data = fetchedData.value;
-  getComments();
-}
-
-const swiperInstanceRef = ref<InstanceType<typeof Swiper> | null>(null);
 
 const handle = {
   clickAuthor(id: string) {
@@ -148,7 +144,7 @@ const handle = {
       const res: EmptyObjectType = await reply(request);
       if (res.errcode != 0) return;
       state.data.comment_count++;
-      getComments();
+      getAllComments();
       state.data.totalCommentCount += 1;
     });
   },
@@ -171,11 +167,6 @@ const breadcrumbs = computed(() => [
   ...categories.value,
 ]);
 
-useSeo(
-  computed(() => state.data?.title),
-  computed(() => state.data?.seo_description || state.data?.title),
-  computed(() => state.data?.seo_keywords || "")
-);
 
 const hashtagList = computed(() => {
   const keywords = state.data?.seo_keywords?.trim();
@@ -192,6 +183,9 @@ const onOpenPage = () => {
 const handleClick = () => {
   window.open(store.configuration?.tg_chan, "_blank");
 };
+onMounted(() => {
+  getDetail()
+})
 </script>
 
 <template>
@@ -201,9 +195,9 @@ const handleClick = () => {
       <v-row no-gutters>
         <!-- Left: Video area -->
         <v-col cols="12" md="7" lg="8" class="d-flex align-center justify-center"
-          :class="isMobile ? '' : 'border-e-thin'">
+          :class="screenMode === 'phone' ? '' : 'border-e-thin'">
           <Swiper ref="swiperInstanceRef" v-if="state.data?.fields" :media-info="state.data.fields"
-            :height="isMobile ? '300px' : '460px'" />
+            :height="screenMode === 'phone' ? '300px' : '460px'" />
         </v-col>
 
         <!-- Right: Info & Comments -->

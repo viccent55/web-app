@@ -204,7 +204,7 @@ onMounted(async () => {
   <v-container class="pa-0 h-100" fluid style="height: 100%">
     <v-card flat color="transparent">
       <!-- Toolbar -->
-      <v-card-title class="channel-bar-sticky px-0 mx-0">
+      <v-card-title class="channel-bar-sticky px-0 ">
         <v-toolbar color="surface" density="compact">
           <v-row dense align="center">
             <v-col cols="4">
@@ -238,9 +238,9 @@ onMounted(async () => {
         </v-tabs>
       </v-card-title>
       <!-- Content -->
-      <v-card-text class="px-0 pb-0 ">
+      <v-card-text class="px-3  ">
         <div ref="containerRef" class="hookup-wrapper">
-          <v-row :dense="smAndDown" class="w-100 px-2">
+          <v-row :dense="smAndDown">
             <v-col v-for="(item, index) in state.items" :key="index" cols="6" sm="4" md="4" lg="3" class="col-lg-1-5">
               <v-card tag="a" flat rounded="lg" class="hookup-card" :to="'/hookup/' + item.id"
                 @click.prevent="openDialog(item.id)">
@@ -345,5 +345,4 @@ onMounted(async () => {
   background-repeat: no-repeat;
   cursor: pointer;
 }
-
 </style>

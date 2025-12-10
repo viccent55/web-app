@@ -67,7 +67,7 @@ const routeKey = (route: any) => (route.fullPath || "").split("?")[0];
           </div>
 
           <!-- Route content with keep-alive -->
-          <router-view v-slot="{ Component, route }" class="px-md-0 px-3">
+          <router-view v-slot="{ Component, route }" class="px-md-0 ">
             <transition name="fade">
               <keep-alive>
                 <component v-if="route.meta.isKeepAlive" :is="Component" :key="routeKey(route)" />

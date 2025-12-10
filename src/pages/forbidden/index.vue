@@ -155,7 +155,7 @@ onMounted(async () => {
 });
 </script>
 <template>
-  <v-container class="pa-0 d-flex flex-column" fluid style="height: 100%">
+  <v-container class="d-flex flex-column pa-0" fluid>
     <v-card flat color="transparent" :loading="state.loading">
       <v-card-title class="px-0">
         <v-tabs v-model="state.cid" color="primary" class="category-tabs flex-shrink-0" density="compact" show-arrows
@@ -166,18 +166,14 @@ onMounted(async () => {
         </v-tabs>
       </v-card-title>
 
-      <v-card-text class="pa-0 px-md-3 position-relative">
-        <div>
-          <div v-if="!state?.data?.length && !isVisible && !state.loading" class="text-center">
-            <v-btn @click="onCategoryChange" color="primary" rounded="xl" prepend-icon="mdi-refresh">
-              刷新
-            </v-btn>
-          </div>
-          <ExploreContainer ref="exploreContainerRef" :items="state.data" :is-loading="state.loading"
-            :is-load-more="state.loadmore" :is-no-more="state.isNomore" @click-item="clickFeed"
-            @get-more="onLoadMore" />
+      <v-card-text class="px-3 px-md-0 position-relative">
+        <div v-if="!state?.data?.length && !isVisible && !state.loading" class="text-center">
+          <v-btn @click="onCategoryChange" color="primary" rounded="xl" prepend-icon="mdi-refresh">
+            刷新
+          </v-btn>
         </div>
-
+        <ExploreContainer ref="exploreContainerRef" :items="state.data" :is-loading="state.loading"
+          :is-load-more="state.loadmore" :is-no-more="state.isNomore" @click-item="clickFeed" @get-more="onLoadMore" />
         <v-overlay style="display: flex; justify-content: center; align-items: center" v-model="isVisible" contained
           :opacity="0.95" persistent>
           <ForbiddenRuleDialog />

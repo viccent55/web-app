@@ -22,7 +22,10 @@ const service: AxiosInstance = axios.create({
 service.interceptors.request.use(
   (config) => {
     // const store = useStore();
-    const api = window.__API_ENDPOINT__ || injectedEnv.value.platform;
+    const api =
+      window.__API_ENDPOINT__ ||
+      injectedEnv.value.platform ||
+      import.meta.env.VITE_PROD_API_BASE;
     if (api) {
       config.baseURL = `${api}/apiv1`;
     }
