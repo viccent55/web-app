@@ -1,12 +1,14 @@
+// request.ts
 import axios, { type AxiosInstance } from "axios";
-import { appendToken } from "@/hooks/useJWT";
-import { encrypt, decrypt, makeSign } from "@/utils/crypto";
 import dayjs from "dayjs";
 import qs from "qs";
 import { Session } from "@/utils/storage";
 import { Notify } from "@/stores/notification";
 import router from "@/router";
 import { injectedEnv } from "@/bootstrap";
+import { appendToken, refreshAccessToken, removeToken } from "@/hooks/useJWT";
+import { encrypt, decrypt, makeSign } from "@/utils/crypto";
+import { useUserStore } from "@/stores/user";
 
 const service: AxiosInstance = axios.create({
   timeout: 10000,
@@ -18,25 +20,32 @@ const service: AxiosInstance = axios.create({
   },
 });
 
-// Adding a request interceptor
+// 🔐 Request interceptor
 service.interceptors.request.use(
-  (config) => {
-    // const store = useStore();
+  async (config: any) => {
     const api =
-      window.__API_ENDPOINT__ ||
+      (window as any).__API_ENDPOINT__ ||
       injectedEnv.value.platform ||
       import.meta.env.VITE_PROD_API_BASE;
+
     if (api) {
       config.baseURL = `${api}/apiv1`;
     }
 
-    appendToken(config);
+    // 先附加 token（内部如果没有 token 会尝试 refresh）
+    await appendToken(config);
+
     const client = "pwa";
     const timestamp = dayjs().unix();
+
     if (import.meta.env.MODE === "development") {
-      console.log(`Request: `, config.data);
+      console.log("Request:", config.url, config.data);
     }
-    if (config.data) {
+
+    // 避免在重试时二次加密：只有还没加密过的才加密
+    if (config.data && !config._isEncrypted) {
+      config._isEncrypted = true; // 自定义标记，防止二次加密
+
       const encryptedData = encrypt(config.data);
       const sign = makeSign(timestamp, encryptedData);
 
@@ -52,9 +61,11 @@ service.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// ✅ Response interceptor
 service.interceptors.response.use(
   (response) => {
     if (response.data.errcode === 401001) {
+      // 这里通常是 refresh 也失效之类，可以继续保持为强制退出
       const userStore = useUserStore();
       userStore.logout();
       Notify.error(response.data.info);
@@ -75,21 +86,8 @@ service.interceptors.response.use(
       }
       return response.data;
     }
-    // const res = response.data;
-    // if (res.code && res.code !== 0) {
-    //   // `token` Expired or the account has been logged in elsewhere
-    //   if (res.code === 401) {
-    //     Session.clear(); // Clear all temporary browser caches
-    //     window.location.reload();
-    //     Notify.error("登录状态已过期，请重新登录");
-    //   }
-    //   return res;
-    // } else {
-    //   return res;
-    // }
   },
-  (error) => {
-    // Do something with the response error
+  async (error) => {
     const currentRoute = router.currentRoute.value;
     const status = error.response?.status;
     const isNetworkError =
@@ -97,29 +95,48 @@ service.interceptors.response.use(
       error.code === "ECONNABORTED" ||
       !error.response; // no response = CORS/fetch failed/host down
 
-    // 1) Handle auth error (401) separately
-    if (status === 401) {
+    const originalConfig: any = error.config || {};
+
+    // 1) 处理 401：尝试刷新 token 然后重试一次
+    if ((status === 401 && !originalConfig._retry) || status == 401013) {
+      originalConfig._retry = true;
+      const ok = await refreshAccessToken();
+
+      if (ok) {
+        const userStore = useUserStore();
+        const newToken = userStore.token.access_token;
+
+        if (newToken) {
+          originalConfig.headers = originalConfig.headers || {};
+          originalConfig.headers.Authorization = `Bearer ${newToken}`;
+        }
+
+        // ⚠️ 注意：config.data 已经是加密后的结构，并且我们在 request 拦截器中用 _isEncrypted
+        // 标记，重试时不会再次加密
+        return service(originalConfig);
+      }
+
+      // refresh 失败 => 清除 Session，强制重新登录
       Session.clear();
+      removeToken();
       Notify.error("登录状态已过期，请重新登录");
-      // optionally redirect to login instead of reload:
-      // router.push({ name: "Login" });
       window.location.reload();
       return Promise.reject(error);
     }
 
-    // 2) For network / CORS / unreachable host, show toast + redirect
-    if (isNetworkError) {
-      Notify.error("服务器连接失败，请稍后重试");
-      if (currentRoute.name !== "notFound") {
-        router.push({
-          name: "notFound",
-          query: { from: currentRoute.fullPath },
-        });
-      }
+    // 2) 网络 / 主机不可达错误（如果你想重定向到404可以打开注释）
+    // if (isNetworkError) {
+    //   Notify.error("服务器连接失败，请稍后重试");
+    //   if (currentRoute.name !== "notFound") {
+    //     router.push({
+    //       name: "notFound",
+    //       query: { from: currentRoute.fullPath },
+    //     });
+    //   }
+    //   return Promise.reject(error);
+    // }
 
-      return Promise.reject(error);
-    }
-    // 4) Other errors: keep your previous behavior
+    // 3) 其他错误：保持你原来的行为
     if (error.response?.data) {
       Notify.info(error.response.statusText || "请求出错");
     } else {
