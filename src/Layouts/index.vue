@@ -61,7 +61,7 @@ const routeKey = (route: any) => (route.fullPath || "").split("?")[0];
         <!-- RIGHT CONTENT -->
         <section class="content-column">
           <!-- Sticky channel bar -->
-          <div v-if="configuration.categories?.length > 0 && ['Home', 'Category'].includes($route?.name as string)"
+          <div v-if="configuration?.categories?.length > 0 && ['Home', 'Category'].includes($route?.name as string)"
             class="channel-bar-sticky bg-surface px-2 mb-2 " :style="{ top: headerOffset }">
             <ExploreChannelBar :items="categories" :active-value="indexChannel" />
           </div>

@@ -3,18 +3,12 @@ import { appendToken } from "@/hooks/useJWT";
 import { encrypt, decrypt, makeSign } from "@/utils/crypto";
 import dayjs from "dayjs";
 import qs from "qs";
-import { useStore } from "@/stores";
 import { Session } from "@/utils/storage";
 import { Notify } from "@/stores/notification";
-import { API_ENDPOINT } from "@/bootstrap";
 import router from "@/router";
-
-// compute a base once, from bootstrap/env
-const baseFromBootstrap =
-  API_ENDPOINT || import.meta.env.VITE_PROD_API_BASE || "";
+import { injectedEnv } from "@/bootstrap";
 
 const service: AxiosInstance = axios.create({
-  baseURL: baseFromBootstrap ? `${baseFromBootstrap}/apiv1` : "/apiv1",
   timeout: 10000,
   headers: { "Content-Type": "application/json" },
   paramsSerializer: {
@@ -27,9 +21,10 @@ const service: AxiosInstance = axios.create({
 // Adding a request interceptor
 service.interceptors.request.use(
   (config) => {
-    const store = useStore();
-    if (store.apiEndPoint) {
-      config.baseURL = store.apiEndPoint + "/apiv1";
+    // const store = useStore();
+    const api = window.__API_ENDPOINT__ || injectedEnv.value.platform;
+    if (api) {
+      config.baseURL = `${api}/apiv1`;
     }
 
     appendToken(config);

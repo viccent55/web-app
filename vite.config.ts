@@ -24,7 +24,6 @@ const viteConfig = defineConfig((mode) => {
       Components({
         dts: "./src/components.d.ts",
         types: [],
-        dirs: ["src/components/global"],
       }),
       AutoImport({
         imports: ["vue", "pinia", VueRouterAutoImports],

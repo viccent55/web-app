@@ -24,7 +24,7 @@ const state = reactive({
 const { clearQuery, store, storeUser, formatDate } = useVariable();
 const pageWrapperRef = ref<HTMLElement | null>(null);
 
-// 1) Load category list
+// 1 Load category list
 const getAllCategories = async () => {
   state.loading = true;
   try {
@@ -186,4 +186,8 @@ onMounted(async () => {
     </v-card>
   </v-container>
 </template>
-<style lang="scss" scoped></style>
+<style scoped lang="scss">
+.position-relative {
+  min-height: 80vh;
+}
+</style>
