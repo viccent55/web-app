@@ -264,15 +264,15 @@ onMounted(async () => {
             </v-col>
 
             <!-- Loading / Load More Indicator -->
-            <v-col cols="12" class="text-center">
-              <ExploreLoading :loading="state.isLoadMore || state.isLoading" />
+            <v-col cols="12" class="text-center ">
+              <ExploreLoading class="pb-8 pb-md-3" :loading="state.isLoadMore || state.isLoading" />
             </v-col>
           </v-row>
 
           <!-- Empty State -->
-          <div v-if="state.items.length >= state.total && state.isNoMore"
-            class="d-flex justify-center align-center text-center py-4">
-            <v-empty-state icon="mdi-image-off" title="没有更多了" text="暂无内容" />
+          <div v-if="state.items.length >= state.total"
+            class="d-flex justify-center align-center text-center pt-2 pb-6">
+            <v-empty-state title="没有更多了" text="暂无内容" />
           </div>
 
           <!-- Checkpoint Button -->

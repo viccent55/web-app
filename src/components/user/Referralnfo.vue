@@ -16,7 +16,7 @@ const onOpenQrcode = () => {
   <v-card class="mt-4 invite-gradient" height="120" rounded="lg" elevation="4">
     <div class="d-flex ga-2 align-center justify-space-between h-100 px-4 px-md-12">
       <v-avatar size="70" class="elevation-2">
-        <v-img src="/icons/icon-128.webp" cover />
+        <v-img src="/logo.webp" cover />
       </v-avatar>
       <div>
         <div class="text-h6 font-weight-bold text-white">

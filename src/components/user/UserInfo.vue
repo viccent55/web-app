@@ -18,7 +18,7 @@ const snackbar = useSnackbar();
 const self = computed(() => userStore.useId === props.user.id);
 
 const gravatarUrl = computed(() => {
-  return `/icons/icon-128.webp`;
+  return `/logo.webp`;
 });
 
 function clickFollow() {

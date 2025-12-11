@@ -113,7 +113,7 @@ defineExpose({ element: feedsContainer });
         threshold: 0.1,
       },
     }" />
-    <ExploreLoading :loading="isLoadingAny" />
+    <ExploreLoading class="pb-8 pb-md-5" :loading="isLoadingAny" />
 
     <div v-if="isNoMore" class="flex justify-center text-xl py-2">
       <v-empty-state headline="不再" text="请稍后再查看更多数据!" title="没有更多数据显示" />

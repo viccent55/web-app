@@ -23,7 +23,7 @@ const state = reactive({
 
 const { clearQuery, store, storeUser, formatDate } = useVariable();
 const pageWrapperRef = ref<HTMLElement | null>(null);
-
+const { smAndDown } = useDisplay()
 // 1 Load category list
 const getAllCategories = async () => {
   state.loading = true;
@@ -127,8 +127,6 @@ const clickFeed = (item: EmptyObjectType) => {
   noteDialog.openNoteDialog(item.id);
 };
 
-const { smAndDown } = useDisplay();
-
 // rule overlay logic
 const shouldShowRuleDialog = computed(
   () => !storeUser.isLogin || (storeUser.userInfo?.invite_count ?? 0) < 5
@@ -142,12 +140,20 @@ watch(
   }
 );
 
-/* ---------------------------
-   6. Initial load
----------------------------- */
+/**
+ * Called by Vuetify's v-intersect when the sentinel div
+ * enters the viewport.
+ */
+function onIntersect(isIntersecting: boolean) {
+  if (!isIntersecting) return;
+  // guard: only load more when needed
+  if (!state.isNomore && !state.loadmore && !state.loading) {
+    onLoadMore();
+  }
+}
+
 onMounted(async () => {
   await getAllCategories();
-
   if (storeUser.isLogin) {
     const items = await fetchData();     // ✅ assign result
     state.data = items;                  // ✅ initial list filled
@@ -166,14 +172,36 @@ onMounted(async () => {
         </v-tabs>
       </v-card-title>
 
-      <v-card-text class="px-3 px-md-0 position-relative">
+      <v-card-text class="px-3 px-md-0 page-content-container">
         <div v-if="!state?.data?.length && !isVisible && !state.loading" class="text-center">
           <v-btn @click="onCategoryChange" color="primary" rounded="xl" prepend-icon="mdi-refresh">
             刷新
           </v-btn>
         </div>
-        <ExploreContainer ref="exploreContainerRef" :items="state.data" :is-loading="state.loading"
-          :is-load-more="state.loadmore" :is-no-more="state.isNomore" @click-item="clickFeed" @get-more="onLoadMore" />
+        <v-row :dense="smAndDown">
+          <v-col v-for="(item, index) in state.data" :key="index" cols="6" sm="4" md="4" lg="3" class="col-lg-1-5">
+            <ExploreFeed :feed="item" @click="clickFeed(item)" />
+          </v-col>
+          <!-- Loading / Load More Indicator -->
+          <v-col cols="12" class="text-center">
+            <ExploreLoading :loading="state.loading || state.loading" />
+          </v-col>
+          <v-col cols="12" v-if="state.data.length >= state.total">
+            <div class="d-flex justify-center align-center text-center py-4">
+              <v-empty-state title="没有更多了" text="暂无内容" />
+            </div>
+          </v-col>
+          <v-col cols="12">
+            <div v-if="!state.isNomore && state.data.length > 0" class="load-more-sentinel pb-5 pb-md-3" v-intersect="{
+              handler: onIntersect,
+              options: {
+                // start loading just before reaching the very bottom
+                rootMargin: '0px 0px 0px 0px',
+                threshold: 0.1,
+              },
+            }" />
+          </v-col>
+        </v-row>
         <v-overlay style="display: flex; justify-content: center; align-items: center" v-model="isVisible" contained
           :opacity="0.95" persistent>
           <ForbiddenRuleDialog />
@@ -183,7 +211,9 @@ onMounted(async () => {
   </v-container>
 </template>
 <style scoped lang="scss">
-.position-relative {
+.page-content-container {
+  // height: 100%;
   min-height: 80vh;
+
 }
 </style>

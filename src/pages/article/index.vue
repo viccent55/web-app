@@ -105,11 +105,10 @@ onMounted(() => {
         </v-col>
 
         <!-- Loading Indicator -->
-        <v-col cols="12" class="text-center">
+        <v-col cols="12" class="text-center pb-16">
           <ExploreLoading :loading="state.loadmore" />
         </v-col>
       </v-row>
-      <ExploreLoading :loading="state.loading" />
       <!-- Empty State -->
       <div v-if="!state.loading && state.data.length >= state.total" class="flex justify-center py-8">
         <v-empty-state headline="没有更多了" text="请稍后再查看!" icon="mdi-folder-open" />

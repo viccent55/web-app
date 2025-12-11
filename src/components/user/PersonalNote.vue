@@ -1,15 +1,18 @@
 <script setup lang="ts">
+import { ref, reactive, computed, nextTick, onMounted } from "vue";
+import { onBeforeRouteLeave } from "vue-router";
 import { getNoteFeeds, getStarFeeds, getLikeFeeds } from "@/service/user";
 import { useNoteDialog } from "@/hooks/useNoteDialog";
 import useVariable from "@/composables/useVariable";
 import { screenMode } from "@/hooks/useScreenMode";
+import { useDisplay } from "vuetify";
 
 const { route } = useVariable();
 const noteDialog = useNoteDialog();
 
 const state = reactive({
   isOpen: false,
-  data: [] as EmptyArrayType[],
+  data: [] as EmptyArrayType[], // assuming your type alias
   qrcodeUrl: "",
   loading: false,
   isNomore: false,
@@ -21,10 +24,9 @@ const state = reactive({
 });
 
 const id = computed(() => Number(route.params.id));
-const exploreContainerRef = ref<{ element: HTMLElement } | null>(null);
-const pageWrapperRef = ref<HTMLElement | null>(null);
+const { smAndDown } = useDisplay();
 
-// 🚧 NEW FLAG to control scroll activation
+// 🚧 control when infinite scroll can start (after first load)
 const infiniteActive = ref(false);
 
 // -------------------- Data Loaders --------------------
@@ -38,16 +40,23 @@ const getRes = {
         limit: state.limit,
       };
       const res = await getNoteFeeds(request);
-      if (res.errcode === 0 && res.data) {
-        state.data = [...state.data, ...res.data];
-        if (!res.data.length) state.isNomore = true;
+      if (res.errcode === 0 && Array.isArray(res.data)) {
+        const items = res.data;
+        state.data = [...state.data, ...items];
+
+        // no more if less than requested
+        if (items.length < state.limit) state.isNomore = true;
+      } else {
+        state.isNomore = true;
       }
     } catch (e) {
       console.log(e);
+      state.isNomore = true;
     } finally {
       state.loading = false;
     }
   },
+
   starFeeds: async () => {
     state.loading = true;
     try {
@@ -57,17 +66,22 @@ const getRes = {
         limit: state.limit,
       };
       const res = await getStarFeeds(request);
-      if (res.errcode === 0 && res.data) {
-        state.data = [...state.data, ...res.data];
-        if (!res.data.length) state.isNomore = true;
+      if (res.errcode === 0 && Array.isArray(res.data)) {
+        const items = res.data;
+        state.data = [...state.data, ...items];
+
+        if (items.length < state.limit) state.isNomore = true;
+      } else {
+        state.isNomore = true;
       }
-      if (!res.data?.length) state.isNomore = true;
     } catch (e) {
       console.log(e);
+      state.isNomore = true;
     } finally {
       state.loading = false;
     }
   },
+
   likeFeeds: async () => {
     state.loading = true;
     try {
@@ -76,14 +90,18 @@ const getRes = {
         page: state.page,
         limit: state.limit,
       };
-      console.log(request);
       const res = await getLikeFeeds(request);
-      if (res.errcode === 0 && res.data.length) {
-        state.data = [...state.data, ...res.data];
+      if (res.errcode === 0 && Array.isArray(res.data)) {
+        const items = res.data;
+        state.data = [...state.data, ...items];
+
+        if (items.length < state.limit) state.isNomore = true;
+      } else {
+        state.isNomore = true;
       }
-      if (!res.data?.length) state.isNomore = true;
     } catch (e) {
       console.log(e);
+      state.isNomore = true;
     } finally {
       state.loading = false;
     }
@@ -91,20 +109,12 @@ const getRes = {
 };
 
 // -------------------- Handlers --------------------
-const handle = {
-  clickFeed(feed: any) {
-    noteDialog.openNoteDialog(feed.id);
-  },
+const clickFeed = (feed: any) => {
+  noteDialog.openNoteDialog(feed.id);
 };
 
 const onLoadMore = async () => {
-  if (
-    !infiniteActive.value || // 🧩 prevent early trigger
-    state.loading ||
-    state.isLoadmore ||
-    state.isNomore
-  )
-    return;
+  if (state.loading || state.isLoadmore || state.isNomore) return;
 
   state.isLoadmore = true;
   state.page++;
@@ -120,37 +130,37 @@ const onLoadMore = async () => {
       case "like":
         await getRes.likeFeeds();
         break;
-      // case "follow":
-      //   await getRes.followFeeds();
-      //   break;
     }
   } finally {
     state.isLoadmore = false;
   }
 };
+
 /**
  * Called by Vuetify's v-intersect when the sentinel div
  * enters the viewport.
  */
 function onIntersect(isIntersecting: boolean) {
+  // console.log("sentinel intersect:", isIntersecting);
   if (!isIntersecting) return;
-  // guard: only load more when needed
   if (!state.isNomore && !state.isLoadmore && !state.loading) {
     onLoadMore();
   }
 }
-onMounted(() => {
 
+onMounted(() => {
+  // nothing special on mount here
 });
+
 onBeforeRouteLeave((to, from, next) => {
   if (state.isOpen) {
     state.isOpen = false;
     next(false);
   } else {
-    // allow navigation
     next();
   }
 });
+
 // -------------------- Public Method --------------------
 defineExpose({
   open: async (item: EmptyObjectType) => {
@@ -162,14 +172,14 @@ defineExpose({
     state.isOpen = true;
     state.title = item.name || "";
 
-    infiniteActive.value = false; // 🚫 disable until data loaded
+    infiniteActive.value = false; // 🚫 disable until first batch finished
 
-    // Initial Load
+    // Initial Load (based on tab)
     if (item.value === "note") await getRes.noteFeeds();
     if (item.value === "star") await getRes.starFeeds();
     if (item.value === "like") await getRes.likeFeeds();
 
-    // ✅ enable infinite scroll only after first load
+    // ✅ enable infinite scroll only after first load + next render tick
     nextTick(() => {
       infiniteActive.value = true;
     });
@@ -178,7 +188,7 @@ defineExpose({
 </script>
 
 <template>
-  <!-- QR Code Dialog -->
+  <!-- QR Code / Feeds Dialog -->
   <v-dialog v-model="state.isOpen" scrollable :fullscreen="screenMode === 'phone'" max-width="1200">
     <v-card class="main-contain" flat>
       <v-card-title class="pb-0">
@@ -186,44 +196,59 @@ defineExpose({
             position: absolute;
             top: 10px;
             left: 10px;
-            padding-top: var(--safe-area-inset-top, 0px);
+
           ">
           <v-icon></v-icon>
         </v-btn>
         <!-- Title -->
-        <div class="text-center text-md-h6 mb-2">{{ state.title }}</div>
+        <div class="text-center text-md-h6 mb-2">
+          {{ state.title }}
+        </div>
       </v-card-title>
 
-      <v-card-text class="px-4 pt-0">
-        <div class="page-wrapper" ref="pageWrapperRef">
-          <ExploreContainer ref="exploreContainerRef" :items="state.data" :is-load-more="state.isLoadmore"
-            :is-no-more="state.isNomore" :scroll-container="pageWrapperRef" @click-item="handle.clickFeed" />
-        </div>
-        <div v-if="!state.isNomore && state.data.length > 0" class="load-more-sentinel" v-intersect="{
-          handler: onIntersect,
-          options: {
-            // start loading just before reaching the very bottom
-            rootMargin: '0px 0px 0px 0px',
-            threshold: 0.1,
-          },
-        }" />
-      </v-card-text>
+      <!-- 👇 make this the scrollable body, like previous dialog -->
+      <v-card-text class="px-4 pt-0 page-wrapper">
+        <v-row :dense="smAndDown">
+          <v-col v-for="(item, index) in state.data" :key="index" cols="6" sm="4" md="4" lg="3">
+            <ExploreFeed :feed="item" @click="clickFeed(item)" />
+          </v-col>
 
+          <!-- Loading / Load More Indicator -->
+          <v-col cols="12" class="text-center">
+            <ExploreLoading :loading="state.loading || state.isLoadmore" />
+          </v-col>
+
+          <!-- No more state -->
+          <v-col cols="12" v-if="state.isNomore && state.data.length > 0">
+            <div class="d-flex justify-center align-center text-center py-4">
+              <v-empty-state title="没有更多了" text="暂无内容" />
+            </div>
+          </v-col>
+
+          <!-- Infinite scroll sentinel -->
+          <v-col cols="12">
+            <div v-if="!state.isNomore && state.data.length > 0" class="load-more-sentinel pb-5 pb-md-3" v-intersect="{
+              handler: onIntersect,
+              options: {
+                rootMargin: '0px 0px 0px 0px',
+                threshold: 0.1,
+              },
+            }" />
+          </v-col>
+        </v-row>
+      </v-card-text>
     </v-card>
   </v-dialog>
 </template>
+
 <style scoped lang="scss">
 .main-contain {
-  // padding-top: env(safe-area-inset-top, 0px);
-  padding-top: var(--safe-area-inset-top, 0px);
   min-height: 500px;
 }
 
 .page-wrapper {
   position: relative;
   width: 100%;
-
-  max-height: calc(100vh - 100px);
   overflow-y: auto;
   scrollbar-width: none;
 }
