@@ -96,13 +96,8 @@ const onCategoryChange = async () => {
 ---------------------------- */
 const onLoadMore = async () => {
   if (state.loading || state.isNomore || state.data.length >= state.total) return;
-
-  const scrollEl = pageWrapperRef.value;
-  const savedScrollTop = scrollEl?.scrollTop ?? 0;
-
   state.loadmore = true;
   state.page++;
-
   const newFeeds = await fetchData();
   if (newFeeds?.length) {
     state.data = [...state.data, ...newFeeds];
@@ -110,12 +105,7 @@ const onLoadMore = async () => {
     state.isNomore = true;
   }
 
-  await nextTick();
-  requestAnimationFrame(() => {
-    if (scrollEl) {
-      scrollEl.scrollTop = savedScrollTop;
-    }
-  });
+
 };
 
 /* ---------------------------
@@ -131,7 +121,10 @@ const clickFeed = (item: EmptyObjectType) => {
 const shouldShowRuleDialog = computed(
   () => !storeUser.isLogin || (storeUser.userInfo?.invite_count ?? 0) < 5
 );
-const isVisible = ref(shouldShowRuleDialog.value);
+const isVisible = computed({
+  get: () => shouldShowRuleDialog.value,
+  set: () => storeUser.isLogin ? false : false
+});
 
 watch(
   () => state.statusCode,
