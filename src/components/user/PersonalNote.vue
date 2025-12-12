@@ -217,7 +217,11 @@ defineExpose({
           <v-col cols="12" class="text-center">
             <ExploreLoading :loading="state.loading || state.isLoadmore" />
           </v-col>
-
+          <v-col cols="12" v-if="!state.data.length">
+            <div class="d-flex justify-center align-center text-center py-4">
+              <v-empty-state title="无数据" />
+            </div>
+          </v-col>
           <!-- No more state -->
           <v-col cols="12" v-if="state.isNomore && state.data.length > 0">
             <div class="d-flex justify-center align-center text-center py-4">

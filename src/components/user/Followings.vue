@@ -88,7 +88,6 @@ defineExpose({
             position: absolute;
             top: 10px;
             left: 10px;
-            padding-top: var(--safe-area-inset-top, 0px);
           ">
           <v-icon></v-icon>
         </v-btn>
