@@ -14,3 +14,13 @@ export function openPage(url: string) {
 export function getCurrentDomain(): string {
   return window.location.origin;
 }
+export function getInstallCode(): string {
+  if (typeof window === "undefined") {
+    return "";
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const raw = params.get("installCode") ?? "";
+
+  return raw.split(/[\/#]/)[0].trim();
+}

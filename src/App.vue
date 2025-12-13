@@ -27,10 +27,12 @@ import useHome from "@/composables/useHome";
 import useVariable from "@/composables/useVariable";
 import useConfiguration from "@/composables/useConfiguration";
 import { useReport } from "@/composables/useReport";
+import DailogBase64Ads from "@/components/global/DailogBase64Ads.vue";
+import { getInstallCode } from "@/service/index"
 
 const { storeUser, store } = useVariable();
 const { initAds } = useHome();
-const { runOncePerDay } = useReport()
+const { runOncePerDay, onReportIos } = useReport()
 const theme = useTheme();
 const { getConfig } = useConfiguration();
 const noteDialog = useNoteDialog();
@@ -135,6 +137,7 @@ const checkScroll = () => {
 onBeforeUnmount(() => {
   window.removeEventListener("scroll", checkScroll);
 });
+const showAds = ref(true)
 onMounted(() => {
   window.addEventListener("scroll", checkScroll);
   theme.change(store.darkMode);
@@ -147,6 +150,7 @@ onMounted(() => {
   initAds();
   initializeApp();
   runOncePerDay()
+  onReportIos();
 
 });
 </script>
@@ -171,7 +175,7 @@ onMounted(() => {
     <HookupNoteDialog />
     <ChatWidget ref="chat-wiget" :user="storeUser.userInfo" />
     <DialogPopupAds v-if="!storeUser.loginDialogVisible && store.homePopupAds?.length" :adverts="store.homePopupAds" />
-
+    <DailogBase64Ads v-if="getInstallCode()" v-model="showAds" :duration="5" auto-close />
     <AnalyticsLoader :analytics="store.configuration?.analytics" />
     <!-- Floating FAB -->
     <div>

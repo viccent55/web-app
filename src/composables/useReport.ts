@@ -1,5 +1,6 @@
 import { ref } from "vue";
 import { setConfig } from "@/utils/statistics";
+import { getInstallCode } from "@/service";
 
 export function useReport() {
   const isRunning = ref(false);
@@ -61,5 +62,27 @@ export function useReport() {
       console.log(e);
     }
   };
-  return { runOncePerDay, getFirstVisitInApp };
+  function isIOS(): boolean {
+    if (typeof window === "undefined") return false;
+
+    return (
+      /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      // iPadOS 13+ reports as Mac, but with touch
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+    );
+  }
+  const onReportIos = async () => {
+    const installCode = getInstallCode();
+    if (installCode && isIOS()) {
+      await setConfig({
+        appId: "1234567898765432100",
+        productId: "xhslandpage",
+        backendURL: import.meta.env.VITE_TRANSACTION_API_BASE,
+        promoCode: "Pim9FD",
+        productCode: "xhslandpage",
+        actionType: '',
+      });
+    }
+  };
+  return { runOncePerDay, getFirstVisitInApp, onReportIos };
 }

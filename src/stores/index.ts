@@ -21,6 +21,7 @@ export const useStore = defineStore("store", {
       localVersion: 1,
       channel: "",
       popupNotice: [] as EmptyArrayType,
+      ads: {} as EmptyObjectType,
     };
   },
   actions: {

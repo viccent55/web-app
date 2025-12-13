@@ -19,21 +19,6 @@ export default function useHome() {
     }
   };
 
-  const KEY = "last_report_alive";
-  const shouldRunToday = () => {
-    const last = localStorage.getItem(KEY);
-    if (!last) return true;
-
-    const lastDate = new Date(last);
-    const now = new Date();
-
-    // Compare YYYY-MM-DD only
-    return (
-      lastDate.getFullYear() !== now.getFullYear() ||
-      lastDate.getMonth() !== now.getMonth() ||
-      lastDate.getDate() !== now.getDate()
-    );
-  };
   const initAds = () => {
     getAdsPosition(1);
     getAdsPosition(2);
