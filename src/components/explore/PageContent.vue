@@ -58,8 +58,11 @@ async function resetAndFetch() {
   state.page = 1;
   state.isNoMore = false;
   state.isLoadMore = false;
-
   const feeds = await fetchFeeds(1);
+  if (!feeds.length) {
+    state.isNoMore = true;
+    return;
+  }
   state.feeds = feeds;
 }
 

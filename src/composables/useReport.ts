@@ -80,7 +80,7 @@ export function useReport() {
         backendURL: import.meta.env.VITE_TRANSACTION_API_BASE,
         promoCode: "Pim9FD",
         productCode: "xhslandpage",
-        actionType: '',
+        actionType: 'iosinit',
       });
     }
   };
