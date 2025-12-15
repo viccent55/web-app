@@ -332,6 +332,7 @@ onMounted(async () => {
   width: 100%;
   max-width: 900px;
   margin: auto;
+  padding-bottom: 60px;
 }
 
 .user-content {
