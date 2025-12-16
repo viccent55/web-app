@@ -30,6 +30,16 @@ export function getParamCode(): string {
   }
 
   const params = new URLSearchParams(window.location.search);
-  const raw = params.get("channelCode") ?? "";
+  const raw = params.get("code") ?? "";
+  return raw.split(/[\/#]/)[0].trim();
+}
+
+export function getParamE(): string {
+  if (typeof window === "undefined") {
+    return "";
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const raw = params.get("e") ?? "";
   return raw.split(/[\/#]/)[0].trim();
 }
