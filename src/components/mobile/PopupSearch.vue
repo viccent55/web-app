@@ -38,7 +38,7 @@
       class="pa-0"
     >
       <v-card-title>
-        <mobile-search />
+        <Search />
       </v-card-title>
 
       <!-- History section -->

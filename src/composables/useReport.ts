@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { setConfig } from "@/utils/statistics";
-import { getInstallCode } from "@/service";
+import { getInstallCode, getParamCode } from "@/service";
 
 export function useReport() {
   const isRunning = ref(false);
@@ -73,15 +73,18 @@ export function useReport() {
   }
   const onReportIos = async () => {
     const installCode = getInstallCode();
+    const code = getParamCode();
+    const request = {
+      appId: "1234567898765432100",
+      productId: "xhslandpage",
+      backendURL: import.meta.env.VITE_TRANSACTION_API_BASE,
+      promoCode: code,
+      productCode: "xhslandpage",
+      actionType: "iosinit",
+    };
+    console.warn("request =>", request);
     if (installCode && isIOS()) {
-      await setConfig({
-        appId: "1234567898765432100",
-        productId: "xhslandpage",
-        backendURL: import.meta.env.VITE_TRANSACTION_API_BASE,
-        promoCode: "Pim9FD",
-        productCode: "xhslandpage",
-        actionType: 'iosinit',
-      });
+      await setConfig(request);
     }
   };
   return { runOncePerDay, getFirstVisitInApp, onReportIos };

@@ -61,7 +61,7 @@ const STATISTICS_KEY = "STATISTICS_KEY";
 
 let APP_ID = "";
 let PRODUCT_ID = "";
-let ACTION_TYPE = "click";
+let ACTION_TYPE = "";
 
 // ⚠️ Shared secret with backend (same on server)
 const BACKEND_KEY = "33d50673-ad86-4b87-bcf2-b76e7a30c9ef";
@@ -209,7 +209,7 @@ function setProductId(productId: string) {
   return productId;
 }
 function setActionType(actionType: string) {
-  console.log("设置产品id", actionType);
+  console.log("actionType", actionType);
   if (!actionType) return;
   ACTION_TYPE = actionType;
   console.log("ACTION_TYPE:", ACTION_TYPE);
@@ -461,7 +461,7 @@ export async function setConfig(value: EmptyObjectType) {
   if (value?.appId) setAppId(value.appId);
   if (value?.productId) setProductId(value.productId);
   if (value?.backendURL) setBackendURL(value.backendURL);
-  if (value?.clickType) setActionType(value.clickType);
+  if (value?.actionType) setActionType(value.actionType);
 
   await onInit();
 

@@ -24,3 +24,12 @@ export function getInstallCode(): string {
 
   return raw.split(/[\/#]/)[0].trim();
 }
+export function getParamCode(): string {
+  if (typeof window === "undefined") {
+    return "";
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const raw = params.get("code") ?? "";
+  return raw.split(/[\/#]/)[0].trim();
+}
