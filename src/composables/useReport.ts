@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { setConfig } from "@/utils/statistics";
-import { getInstallCode, getParamCode } from "@/service";
+import { getInstallCode, getParamCode, getParamE } from "@/service";
 
 export function useReport() {
   const isRunning = ref(false);
@@ -33,7 +33,7 @@ export function useReport() {
         productId: "xhslandpage",
         backendURL: import.meta.env.VITE_TRANSACTION_API_BASE,
         promoCode: getParamCode(),
-        productCode: "xhslandpage",
+        productCode: getParamE(),
         actionType: "active",
       });
 
@@ -54,7 +54,7 @@ export function useReport() {
         productId: "xhslandpage",
         backendURL: import.meta.env.VITE_TRANSACTION_API_BASE,
         promoCode: getParamCode(),
-        productCode: "xhslandpage",
+        productCode: getParamE(),
         actionType: "install",
         installCode: getInstallCode(),
       });
@@ -78,7 +78,7 @@ export function useReport() {
       productId: "xhslandpage",
       backendURL: import.meta.env.VITE_TRANSACTION_API_BASE,
       promoCode: getParamCode(),
-      productCode: "xhslandpage",
+      productCode: getParamE(),
       actionType: "iosinit",
       installCode: getInstallCode(),
     };
