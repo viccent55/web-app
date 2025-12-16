@@ -41,3 +41,4 @@ package-lock.json
 android
 ios
 public/manifest.webmanifest
+.env

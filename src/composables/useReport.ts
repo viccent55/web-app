@@ -82,8 +82,8 @@ export function useReport() {
       actionType: "iosinit",
       installCode: getInstallCode(),
     };
-    console.warn("request =>", request);
     if (getInstallCode() && isIOS()) {
+      console.warn("request =>", request);
       await setConfig(request);
     }
   };
