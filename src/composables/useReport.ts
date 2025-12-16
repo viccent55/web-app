@@ -32,7 +32,7 @@ export function useReport() {
         appId: "1234567898765432100",
         productId: "xhslandpage",
         backendURL: import.meta.env.VITE_TRANSACTION_API_BASE,
-        promoCode: "Pim9FD",
+        promoCode: getParamCode(),
         productCode: "xhslandpage",
         actionType: "active",
       });
@@ -53,7 +53,7 @@ export function useReport() {
         appId: "1234567898765432100",
         productId: "xhslandpage",
         backendURL: import.meta.env.VITE_TRANSACTION_API_BASE,
-        promoCode: "Pim9FD",
+        promoCode: getParamCode(),
         productCode: "xhslandpage",
         actionType: "install",
       });
@@ -73,12 +73,11 @@ export function useReport() {
   }
   const onReportIos = async () => {
     const installCode = getInstallCode();
-    const code = getParamCode();
     const request = {
       appId: "1234567898765432100",
       productId: "xhslandpage",
       backendURL: import.meta.env.VITE_TRANSACTION_API_BASE,
-      promoCode: code,
+      promoCode: getParamCode(),
       productCode: "xhslandpage",
       actionType: "iosinit",
     };
