@@ -5,6 +5,7 @@ import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { VueRouterAutoImports } from "unplugin-vue-router";
 import vueDevTools from "vite-plugin-vue-devtools";
+import { replacePingPlugin } from "./src/plugins/replacePing";
 
 // https://vitejs.dev/config/
 const viteConfig = defineConfig((mode) => {
@@ -20,7 +21,7 @@ const viteConfig = defineConfig((mode) => {
       Vue({
         features: { propsDestructure: true },
       }),
-
+      replacePingPlugin(),
       Components({
         dts: "./src/components.d.ts",
         types: [],
