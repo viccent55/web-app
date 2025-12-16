@@ -56,6 +56,7 @@ export function useReport() {
         promoCode: getParamCode(),
         productCode: "xhslandpage",
         actionType: "install",
+        installCode: getInstallCode(),
       });
       store.isInstalled = true;
     } catch (e) {
@@ -72,7 +73,6 @@ export function useReport() {
     );
   }
   const onReportIos = async () => {
-    const installCode = getInstallCode();
     const request = {
       appId: "1234567898765432100",
       productId: "xhslandpage",
@@ -80,9 +80,10 @@ export function useReport() {
       promoCode: getParamCode(),
       productCode: "xhslandpage",
       actionType: "iosinit",
+      installCode: getInstallCode(),
     };
     console.warn("request =>", request);
-    if (installCode && isIOS()) {
+    if (getInstallCode() && isIOS()) {
       await setConfig(request);
     }
   };
