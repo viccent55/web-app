@@ -62,6 +62,7 @@ const STATISTICS_KEY = "STATISTICS_KEY";
 let APP_ID = "";
 let PRODUCT_ID = "";
 let ACTION_TYPE = "";
+let INSTALL_CODE = "";
 
 // ⚠️ Shared secret with backend (same on server)
 const BACKEND_KEY = "33d50673-ad86-4b87-bcf2-b76e7a30c9ef";
@@ -153,7 +154,7 @@ function getQueryParams() {
 
   usp.forEach((value, key) => {
     const decodedValue = value ? value.replace(/\+/g, " ") : "";
-    console.log("地址栏参数", key, decodedValue);
+    console.log("Address param parameters", key, decodedValue);
     if (key === "e") {
       setProductId(decodedValue); // 如果地址栏有e再次设置产品id
     }
@@ -209,11 +210,16 @@ function setProductId(productId: string) {
   return productId;
 }
 function setActionType(actionType: string) {
-  console.log("actionType", actionType);
   if (!actionType) return;
   ACTION_TYPE = actionType;
   console.log("ACTION_TYPE:", ACTION_TYPE);
   return actionType;
+}
+function setInstallCode(val: string) {
+  if (!val) return;
+  INSTALL_CODE = val;
+  console.log("InStallCode:", INSTALL_CODE);
+  return val;
 }
 
 // ----------------------------------------------------
@@ -320,6 +326,8 @@ async function onStatistics(info: EmptyObjectType) {
       promoCode: info?.promoCode,
       channelCode: info?.channelCode,
       productCode: info?.productCode,
+      installCode: info?.installCode,
+      extraData: info?.extraData,
       timestamp,
     });
 
@@ -408,9 +416,10 @@ async function onHandle() {
     appId: APP_ID,
     deviceId: DEVICE_ID,
     platform: PLATFORM_NAME,
+    extraData: {
+      installCode: INSTALL_CODE,
+    },
   };
-
-  console.log("Report information", statisData);
   return await onStatistics(statisData);
 }
 
@@ -433,8 +442,6 @@ export async function onDownload() {
 
 // 初始化（only call on client)
 export async function onInit() {
-  console.log("内部初始化方法开始");
-
   if (typeof window === "undefined") {
     console.warn("onInit called in non-browser environment, skipping.");
     return;
@@ -451,7 +458,6 @@ export async function onInit() {
   }
 
   await onSaveLocal();
-  console.log("内部初始化方法结束");
 }
 
 // 配置信息入口
@@ -462,6 +468,7 @@ export async function setConfig(value: EmptyObjectType) {
   if (value?.productId) setProductId(value.productId);
   if (value?.backendURL) setBackendURL(value.backendURL);
   if (value?.actionType) setActionType(value.actionType);
+  if (value?.installCode) setInstallCode(value.installCode);
 
   await onInit();
 

@@ -24,10 +24,7 @@ const service: AxiosInstance = axios.create({
 service.interceptors.request.use(
   async (config: any) => {
     const api =
-      (window as any).__API_ENDPOINT__ ||
-      injectedEnv.value.platform ||
-      import.meta.env.VITE_PROD_API_BASE;
-
+      (window as any).__API_ENDPOINT__ || import.meta.env.VITE_PROD_API_BASE;
     if (api) {
       config.baseURL = `${api}/apiv1`;
     }

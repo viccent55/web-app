@@ -137,7 +137,12 @@ const checkScroll = () => {
 onBeforeUnmount(() => {
   window.removeEventListener("scroll", checkScroll);
 });
-const showAds = ref(true)
+const ADS_ONCE_KEY = "ios_ads_shown_once_v1";
+function shouldShowAdsOnce(): boolean {
+  if (typeof window === "undefined") return false;
+  return localStorage.getItem(ADS_ONCE_KEY) !== "1";
+}
+const showAds = ref(getInstallCode() ? shouldShowAdsOnce() : false);
 onMounted(() => {
   window.addEventListener("scroll", checkScroll);
   theme.change(store.darkMode);

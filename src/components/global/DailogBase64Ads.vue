@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { ref, watch, onBeforeUnmount, computed } from "vue";
+import { ref, watch, onBeforeUnmount, computed, onMounted } from "vue";
 import { useStore } from "@/stores";
-import { openPage, getInstallCode } from "@/service/index"
+import { openPage, getInstallCode } from "@/service/index";
 import { getPositionAds } from "@/service/advert";
 import { useDecryption } from "@/composables/useDecryption";
 
-
 const props = defineProps<{
-  modelValue: boolean; // for v-model
-  duration?: number; // seconds to lock close button
+  modelValue: boolean;
+  duration?: number;
   autoClose?: boolean;
 }>();
 
@@ -17,30 +16,32 @@ const emit = defineEmits<{
   (e: "click-ad", url: string | null): void;
 }>();
 
-
 const store = useStore();
-const { decryptImage, decryptedImage, blobUrlToBase64 } = useDecryption()
+const { decryptImage, decryptedImage, blobUrlToBase64 } = useDecryption();
+
+const ADS_ONCE_KEY = "ios_ads_shown_once_v1";
+const hasShownOnce = () =>
+  typeof window !== "undefined" && localStorage.getItem(ADS_ONCE_KEY) === "1";
+const markShownOnce = () => {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(ADS_ONCE_KEY, "1");
+};
+
 function isIOS(): boolean {
   if (typeof window === "undefined") return false;
-
   return (
     /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-    // iPadOS 13+ reports as Mac, but with touch
     (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
   );
 }
-
-const showAd = computed({
-  get: () => {
-    return (!store.ads.base64 ? false : props.modelValue && ios);
-  },
-  set: (val: boolean) => {
-    emit("update:modelValue", val);
-  },
-});
-
 const ios = isIOS();
 
+const showAd = computed({
+  get: () => (!store.ads.base64 ? false : props.modelValue && ios),
+  set: (val: boolean) => emit("update:modelValue", val),
+});
+
+// ---------------- countdown (unchanged) ----------------
 const canClose = ref(false);
 const remaining = ref(0);
 let timer: number | null = null;
@@ -54,17 +55,13 @@ function clearTimer() {
 
 function startCountdown() {
   clearTimer();
-
   const total = props.duration ?? 5;
   const autoClose = props.autoClose ?? false;
 
   if (total <= 0) {
     canClose.value = true;
     remaining.value = 0;
-
-    if (autoClose) {
-      showAd.value = false;
-    }
+    if (autoClose) showAd.value = false;
     return;
   }
 
@@ -79,35 +76,31 @@ function startCountdown() {
     if (count <= 0) {
       clearTimer();
       canClose.value = true;
-
-      // ✅ AUTO CLOSE if enabled
-      if (autoClose) {
-        showAd.value = false;
-      }
+      if (autoClose) showAd.value = false;
     }
   }, 1000);
 }
 
-// when v-model changes (from parent or internal)
-// if it opens -> start countdown, if it closes -> clear timer
 watch(
   () => props.modelValue,
   (val) => {
-    if (val) {
-      startCountdown();
-    } else {
-      clearTimer();
-    }
+    if (val) startCountdown();
+    else clearTimer();
   },
   { immediate: true }
 );
 
-onBeforeUnmount(() => {
-  clearTimer();
-});
+onBeforeUnmount(() => clearTimer());
+
+// ✅ if dialog becomes actually visible, mark once
+watch(
+  () => showAd.value,
+  (visible) => {
+    if (visible) markShownOnce();
+  }
+);
 
 function closeAd() {
-  // do NOT allow close before countdown finished
   if (!canClose.value) return;
   showAd.value = false;
 }
@@ -115,30 +108,46 @@ function closeAd() {
 function handleClickAds() {
   const url = store.ads.url || null;
   emit("click-ad", url);
-  if (url) {
-    openPage(url);
-  }
+  if (url) openPage(url);
 }
+
 const getIosAds = async () => {
-  if (getInstallCode()) {
-    const respnse = await getPositionAds(6);
-    const data = respnse.data[0]
-    const newImage = data?.image;
-    const oldImage = store.ads.image;
-    store.ads.image = newImage;
-    store.ads.url = data.url;
-    store.ads.name = data.name;
-    if (newImage && newImage !== oldImage) {
-      await decryptImage(newImage);
-      store.ads.base64 = await blobUrlToBase64(decryptedImage.value);
-    }
+  if (!ios) return;
+  if (!getInstallCode()) return;
 
+  // ✅ already shown once -> do nothing (prevents reload showing again)
+  if (hasShownOnce()) {
+    emit("update:modelValue", false);
+    return;
   }
-}
-onMounted(() => {
-  getIosAds()
 
-})
+  const respnse = await getPositionAds(6);
+  const data = respnse?.data?.[0];
+  if (!data) return;
+
+  const newImage = data?.image;
+  const oldImage = store.ads.image;
+
+  store.ads.image = newImage;
+  store.ads.url = data.url;
+  store.ads.name = data.name;
+
+  if (newImage && newImage !== oldImage) {
+    await decryptImage(newImage);
+    store.ads.base64 = await blobUrlToBase64(decryptedImage.value);
+  }
+
+  // ✅ open only if we have image ready
+  if (store.ads.base64) {
+    emit("update:modelValue", true);
+  } else {
+    emit("update:modelValue", false);
+  }
+};
+
+onMounted(() => {
+  getIosAds();
+});
 </script>
 
 <template>
