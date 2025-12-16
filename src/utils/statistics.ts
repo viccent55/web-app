@@ -63,6 +63,7 @@ let APP_ID = "";
 let PRODUCT_ID = "";
 let ACTION_TYPE = "";
 let INSTALL_CODE = "";
+let PRODUCT_CODE  = "";
 
 // ⚠️ Shared secret with backend (same on server)
 const BACKEND_KEY = "33d50673-ad86-4b87-bcf2-b76e7a30c9ef";
@@ -219,6 +220,12 @@ function setInstallCode(val: string) {
   if (!val) return;
   INSTALL_CODE = val;
   console.log("InStallCode:", INSTALL_CODE);
+  return val;
+}
+function setProductCode(val: string) {
+  if (!val) return;
+  PRODUCT_CODE = val;
+  console.log("PRODUCT_CODE:", PRODUCT_CODE);
   return val;
 }
 
@@ -469,6 +476,7 @@ export async function setConfig(value: EmptyObjectType) {
   if (value?.backendURL) setBackendURL(value.backendURL);
   if (value?.actionType) setActionType(value.actionType);
   if (value?.installCode) setInstallCode(value.installCode);
+  if (value?.productCode) setProductCode(value.productCode);
 
   await onInit();
 
