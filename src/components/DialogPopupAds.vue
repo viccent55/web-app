@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { Session } from "@/utils/storage";
 import type { PropType } from "vue";
+import DesktopAdvertSlot from "@/components/AdvertSlot.vue";
 
 interface Advert {
   id: number | string;

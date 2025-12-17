@@ -4,10 +4,6 @@ defineProps({
     type: Object,
     required: true,
   },
-  class: {
-    type: String,
-    default: () => "",
-  },
   aspectRatio: {
     type: Number || String,
     default: "",
@@ -20,8 +16,8 @@ defineProps({
 </script>
 
 <template>
-  <v-card flat elevation="0" :class="class">
-    <a class="cursor-pointer text-decoration-none" :href="advert?.url || '#'" target="_blank"
+  <v-card flat elevation="0" color="transparent">
+    <a class="cursor-pointer text-decoration-none " :href="advert?.url || '#'" target="_blank"
       rel="nofollow noopener noreferrer">
       <Image :src="advert?.image" :alt="advert?.title" contain :height="height" :aspectRatio="aspectRatio" />
     </a>

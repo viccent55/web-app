@@ -179,7 +179,7 @@ onMounted(() => {
     <ForbiddenNoteDialog />
     <HookupNoteDialog />
     <ChatWidget ref="chat-wiget" :user="storeUser.userInfo" />
-    <DialogPopupAds v-if="!storeUser.loginDialogVisible && store.homePopupAds?.length" :adverts="store.homePopupAds" />
+    <DialogPopupAds v-if="store.homePopupAds?.length && !showAds" :adverts="store.homePopupAds" />
     <DailogBase64Ads v-if="getInstallCode()" v-model="showAds" :duration="5" auto-close />
     <AnalyticsLoader :analytics="store.configuration?.analytics" />
     <!-- Floating FAB -->

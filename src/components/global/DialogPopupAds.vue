@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted, type PropType } from "vue";
-import { Local } from "@/utils/storage";
 
 interface Advert {
   id: number | string;
@@ -20,105 +19,88 @@ const dialog = ref(false);
 const adQueue = ref<Advert[]>([]);
 const currentAdIndexInQueue = ref(0);
 
-const currentAdvert = computed(
-  () => adQueue.value[currentAdIndexInQueue.value]
-);
-
-const SESSION_KEY_PREFIX = "ads_";
-const SESSION_DURATION = 1 * 60 * 60 * 1000; // 1 hour
-
-function getSessionKey(advert: Advert): string {
-  if (!advert || !advert.id) {
-    console.error("Advertisement is missing an ID.", advert);
-    return `${SESSION_KEY_PREFIX}unknown`;
-  }
-  return `${SESSION_KEY_PREFIX}${advert.id}`;
-}
-
-// ✅ check if this ad was shown within SESSION_DURATION using Local storage
-function isSessionActive(advert: Advert): boolean {
-  const key = getSessionKey(advert);
-
-  try {
-    const stored = Local.get(key); // might throw if missing / invalid
-    if (stored == null) return false;
-
-    const last =
-      typeof stored === "number" ? stored : Number(stored);
-
-    if (!Number.isFinite(last)) return false;
-
-    return Date.now() - last < SESSION_DURATION;
-  } catch (e) {
-    console.error("Failed to read Local storage item:", e);
-    return false;
-  }
-}
-
-// ✅ store the timestamp when this ad was just shown/closed
-function setSession(advert: Advert) {
-  const key = getSessionKey(advert);
-
-  try {
-    Local.set(key, Date.now()); // store as number
-  } catch (e) {
-    console.error("Failed to set Local storage item:", e);
-  }
-}
+const currentAdvert = computed(() => adQueue.value[currentAdIndexInQueue.value]);
 
 function closeDialog() {
   dialog.value = false;
 }
 
 function onAfterLeave() {
-  if (!currentAdvert.value) return;
-
-  // Set session for the ad that was just closed
-  setSession(currentAdvert.value);
-
-  // Move to the next ad in the queue
   currentAdIndexInQueue.value++;
 
   if (currentAdIndexInQueue.value < adQueue.value.length) {
-    // Use a small delay to make the transition smoother
     setTimeout(() => {
       dialog.value = true;
     }, 300);
   }
 }
 
-onMounted(() => {
-  if (!props.adverts || !props.adverts.length) return;
+// ✅ ONCE PER TAB SESSION (survives reload, cleared when tab closes)
+const SESSION_ONCE_KEY = "ads_popup_shown_this_session_v1";
 
-  // Filter ads to create a queue of those that should be shown
-  adQueue.value = props.adverts.filter((advert) => {
-    if (!advert.id) {
-      console.warn("Skipping an advert because it has no ID.", advert);
-      return false;
-    }
-    return !isSessionActive(advert);
-  });
+function hasShownThisSession(): boolean {
+  if (typeof window === "undefined") return true; // SSR: don't show
+  try {
+    return window.sessionStorage.getItem(SESSION_ONCE_KEY) === "1";
+  } catch {
+    return true;
+  }
+}
+
+function markShownThisSession() {
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.setItem(SESSION_ONCE_KEY, "1");
+  } catch {}
+}
+
+onMounted(() => {
+  // ✅ already shown in this session -> never show again on reload/href
+  if (hasShownThisSession()) return;
+
+  if (!props.adverts?.length) return;
+
+  // build queue
+  adQueue.value = props.adverts.filter((a) => !!a?.id);
 
   if (adQueue.value.length > 0) {
+    // ✅ mark immediately so reload won’t show again
+    markShownThisSession();
     dialog.value = true;
   }
 });
 </script>
 
 <template>
-  <v-dialog v-model="dialog" @after-leave="onAfterLeave" content-class="overflow-visible bg-transparent elevation-0"
-    persistent>
+  <v-dialog
+    v-model="dialog"
+    @after-leave="onAfterLeave"
+    content-class="overflow-visible bg-transparent elevation-0"
+    persistent
+  >
     <div style="position: relative">
       <v-card class="pa-0" color="transparent" flat>
-        <DesktopAdvertSlot v-if="currentAdvert" :advert="currentAdvert" class="height-dialog" />
+        <AdvertSlot
+          v-if="currentAdvert"
+          :advert="currentAdvert"
+          class="height-dialog"
+        />
       </v-card>
 
-      <v-btn icon variant="flat" color="surface" class="close-button" @click="closeDialog" density="comfortable">
+      <v-btn
+        icon
+        variant="flat"
+        color="surface"
+        class="close-button"
+        @click="closeDialog"
+        density="comfortable"
+      >
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </div>
   </v-dialog>
 </template>
+
 
 <style scoped lang="scss">
 .close-button {
