@@ -29,6 +29,7 @@ import useConfiguration from "@/composables/useConfiguration";
 import { useReport } from "@/composables/useReport";
 import DailogBase64Ads from "@/components/global/DailogBase64Ads.vue";
 import { getInstallCode } from "@/service/index"
+import type NotificationDialogVue from "@/components/global/NotificationDialog.vue";
 
 const { storeUser, store } = useVariable();
 const { initAds } = useHome();
@@ -178,6 +179,7 @@ onMounted(() => {
     <ArticleNoteDialog />
     <ForbiddenNoteDialog />
     <HookupNoteDialog />
+    <NotificationDialog v-if="!showAds && !storeUser.loginDialogVisible" />
     <ChatWidget ref="chat-wiget" :user="storeUser.userInfo" />
     <DialogPopupAds v-if="store.homePopupAds?.length && !showAds" :adverts="store.homePopupAds" />
     <DailogBase64Ads v-if="getInstallCode()" v-model="showAds" :duration="5" auto-close />

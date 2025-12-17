@@ -35,9 +35,6 @@ export default function useHome() {
       console.error("Error fetching popup notice:", error);
     }
   };
-  onMounted(() => {
-    getPopupnotice();
-  });
   return {
     initAds,
     getPopupnotice,
