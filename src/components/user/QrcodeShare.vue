@@ -120,7 +120,7 @@ defineExpose({
         <!-- Invite Count -->
         <div class="text-center my-4">
           累计邀请
-          <span class="text-green font-weight-bold">5</span>
+          <span class="text-green font-weight-bold"> {{ storeUser?.userInfo?.invite_count || 0 }}</span>
           人
         </div>
 
@@ -141,7 +141,7 @@ defineExpose({
         <!-- Rules -->
         <div class="text-body-2 my-4">
           <p>规则说明：</p>
-          <p>1. 邀请5名真实好友成功注册，即可解锁禁区视频免费观看。</p>
+          <p>1. 邀请3名真实好友成功注册，即可解锁禁区视频免费观看。</p>
           <p>2. 点击【保存二维码】或【复制推广链接】获得专属推广链接。</p>
           <p>3. 禁止使用非法程序作弊，一经发现，账号将永久封禁。</p>
         </div>
