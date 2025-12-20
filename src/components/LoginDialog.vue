@@ -130,7 +130,7 @@ watch(
 </script>
 
 <template>
-  <v-dialog v-model="loginDialogVisible" max-width="500" persistent>
+  <v-dialog v-model="loginDialogVisible" max-width="500">
     <v-card rounded="xl">
       <v-card-title class="d-flex justify-end pb-0 mb-0 py-2">
         <v-btn icon="mdi-close" size="small" variant="text" @click="handleClose" />
