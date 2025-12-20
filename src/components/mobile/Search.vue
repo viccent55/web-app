@@ -160,14 +160,11 @@ const homePage = () => {
       <v-card-text>
         <AppLink class="mt-2" :apps="store?.recommendAds" v-if="store?.recommendAds?.length > 0"
           @item-click="(v: EmptyObjectType) => adsClick(v.id)" height="100%" />
+        <div class="d-flex justify-center" v-if="!store?.recommendAds?.length">
+          <v-empty-state text="无广告入口!" class="pa-0" title="无广告" />
+        </div>
       </v-card-text>
-
-      <!-- Optional Close Actions -->
-      <!--
-      <v-card-actions class="justify-end">
-        <v-btn text @click="handleClose">关闭</v-btn>
-      </v-card-actions>
-      --></v-card>
+    </v-card>
   </v-dialog>
   <DialogInfo ref="dialgInfo" />
 </template>
