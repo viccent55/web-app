@@ -157,7 +157,7 @@ watch(
 </script>
 
 <template>
-  <v-dialog v-model="noteDialogVisible" max-width="1200" persistent height="100%" @after-enter="onOpenNoteDialog"
+  <v-dialog v-model="noteDialogVisible" max-width="1200"  height="100%" @after-enter="onOpenNoteDialog"
     scrollable :fullscreen="smAndDown">
     <v-card :loading="loading" class="main-contain">
       <v-card-title v-if="smAndDown">

@@ -101,8 +101,8 @@ watch(
 </script>
 
 <template>
-  <v-dialog v-model="noteDialogVisible" max-width="1200" min-height="520px" persistent @after-enter="onOpenNoteDialog"
-    scrollable :fullscreen="screenMode === 'phone'">
+  <v-dialog v-model="noteDialogVisible" max-width="1200" min-height="520px" @after-enter="onOpenNoteDialog" scrollable
+    :fullscreen="screenMode === 'phone'">
     <v-card :loading="state.loading" class="main-contain">
       <v-card-title>
         <div v-if="screenMode === 'phone'" class="d-flex justify-space-between align-center">

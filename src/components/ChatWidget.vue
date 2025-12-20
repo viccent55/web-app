@@ -63,49 +63,45 @@ defineExpose({ open, close });
   align-items: flex-end;
   justify-content: flex-end;
   z-index: 9999;
+
+  /* ✅ keep overlay content above iPhone home indicator */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
 }
 
 .chat-panel {
   width: 360px;
   max-width: 100%;
-  height: 540px;
-  max-height: 90vh;
+
+  /* ✅ allow safe bottom space inside panel */
+  height: min(540px, calc(100vh - 24px - env(safe-area-inset-top, 0px)));
+  max-height: calc(90vh - env(safe-area-inset-bottom, 0px));
+
   background: #111827;
   border-radius: 16px 16px 0 0;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+
+  /* margin now safe because overlay has padding */
   margin: 0 12px 12px;
-}
-
-.chat-header {
-  height: 44px;
-  background: #1f2937;
-  color: #f9fafb;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 12px;
-  font-size: 14px;
-}
-
-.chat-close {
-  background: transparent;
-  border: none;
-  color: inherit;
-  font-size: 20px;
-  cursor: pointer;
 }
 
 .chat-body {
   flex: 1;
   background: #000;
+  /* ✅ reserve space so iframe bottom UI isn't behind home indicator */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  /* important so iframe doesn't overflow outside */
+  overflow: hidden;
 }
 
 .chat-iframe {
   width: 100%;
   height: 100%;
+  border: 0;
 }
 
 /* simple fade animation */

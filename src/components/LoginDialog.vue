@@ -127,6 +127,10 @@ watch(
     immediate: true,
   }
 );
+const { showChatWidget } = useSnackbar();
+const onLiveChat = () => {
+  showChatWidget();
+};
 </script>
 
 <template>
@@ -176,11 +180,23 @@ watch(
 
         <!-- Extra actions -->
         <div class="mt-md-3 mt-2">
-          <v-btn v-if="state.isLogin" block color="secondary" variant="tonal" size="default" rounded="pill"
-            @click="openFogotDialog">
-            忘记密码？
-          </v-btn>
+          <v-row dense>
+            <v-col cols="6">
+              <v-btn v-if="state.isLogin" block color="secondary" variant="tonal" size="default" rounded="pill"
+                @click="openFogotDialog">
+                忘记密码？
+              </v-btn>
 
+            </v-col>
+            <v-col cols="6">
+              <v-btn v-if="state.isLogin" block color="primary" class="mb-2 elevation-0" rounded="pill"
+                @click="onLiveChat">
+                <v-icon size="20">mdi-headset</v-icon>
+                <span class="ml-2">在线客服</span>
+              </v-btn>
+
+            </v-col>
+          </v-row>
           <v-btn v-if="screenMode == 'phone'" block color="warning" variant="flat" rounded="xl" class="mt-2"
             @click="openPage(store.configuration?.download_app_url)">
             App下载

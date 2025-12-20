@@ -63,7 +63,7 @@ const onResetPassword = async () => {
 </script>
 
 <template>
-  <v-dialog v-model="forgotPasswordDialog" persistent max-width="500">
+  <v-dialog v-model="forgotPasswordDialog"  max-width="500">
     <v-card class="pa-6 rounded-xl">
       <!-- Close Button -->
       <div class="d-flex justify-end">
