@@ -169,4 +169,5 @@ const homePage = () => {
       </v-card-actions>
       --></v-card>
   </v-dialog>
+  <DialogInfo ref="dialgInfo" />
 </template>
