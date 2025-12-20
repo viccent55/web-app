@@ -102,7 +102,7 @@ const initializeApp = async () => {
         !lastLoginPrompt ||
         now - Number(lastLoginPrompt) > LOGIN_DIALOG_COOLDOWN
       ) {
-        openLoginDialog();
+        // openLoginDialog();
         localStorage.setItem("lastLoginPromptTimestamp", String(now));
       }
     }
