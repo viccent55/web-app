@@ -85,16 +85,10 @@ defineExpose({ open });
 </script>
 
 <template>
-  <v-dialog v-model="dialogVisible" max-width="450" persistent v-if="currentNotice">
+  <v-dialog v-model="dialogVisible" max-width="450" v-if="currentNotice">
     <v-card class="position-relative">
       <!-- Close icon top-right -->
-      <v-btn
-        icon
-        variant="text"
-        class="position-absolute"
-        style="top: 6px; right: 6px; z-index: 2"
-        @click="closeOnly"
-      >
+      <v-btn icon variant="text" class="position-absolute" style="top: 6px; right: 6px; z-index: 2" @click="closeOnly">
         <v-icon>mdi-close</v-icon>
       </v-btn>
 
