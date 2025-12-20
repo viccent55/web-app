@@ -54,7 +54,7 @@ const onLoadMore = async () => {
     state.loadmore = true;
     state.page++;
     const data = await fetchArticle();
-    if (data.items.length) {
+    if (data.items?.length) {
       state.data.push(...data.items);
     }
   } finally {
@@ -89,8 +89,8 @@ onMounted(() => {
       <v-row :no-gutters="screenMode === 'phone'">
         <!-- Each Article Card -->
         <v-col v-for="(item, index) in state.data" :key="index" cols="12" md="6">
-          <v-card flat color="surface" class="my-2 md:my-4 article-card " @click="openDialog(item.id)" tag="a"
-            @click.prevent="openDialog(item.id)" :to="'/article/' + item.id">
+          <v-card flat color="surface" class="my-2 md:my-4 article-card " @click="openDialog(item.id)"
+            @click.prevent="openDialog(item.id)">
             <Image :src="item.cover" :height="screenMode === 'phone' ? '160' : '260'" cover class="rounded-t-lg">
               <!-- Optional image loading placeholder -->
               <template #placeholder>

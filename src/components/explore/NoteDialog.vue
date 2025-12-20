@@ -20,7 +20,6 @@ import CommentBlock from "./comp/CommentBlock.vue";
 import BottomAction from "./comp/BottomAction.vue";
 import { adsClick } from "@/service/advert";
 import { getCurrentDomain } from "@/service";
-import { useDialogUXLock } from "@/hooks/useDialogUXLock";
 import { useDisplay } from "vuetify";
 import useVariable from "@/composables/useVariable";
 import { screenMode } from "@/hooks/useScreenMode";
@@ -202,13 +201,7 @@ const getStyle = computed(() => {
     ? "height:100%; overflow-y: scroll"
     : "max-height: calc(100vh - 110px); overflow-y: scroll";
 });
-watch(
-  () => noteDialogVisible.value,
-  (val) => {
-    useDialogUXLock(noteDialogVisible);
 
-  }
-);
 </script>
 
 <template>

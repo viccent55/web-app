@@ -11,7 +11,6 @@ import CommentBlock from "./comp/CommentBlock.vue";
 import BottomAction from "./comp/BottomAction.vue";
 import { adsClick } from "@/service/advert";
 import { getCurrentDomain } from "@/service";
-import { useDialogUXLock } from "@/hooks/useDialogUXLock";
 import { useDisplay } from "vuetify";
 import useVariable from "@/composables/useVariable";
 import useSnackbar from "@/composables/useSnackbar";
@@ -90,14 +89,6 @@ const onLiveChat = () => {
   showChatWidget();
 };
 
-watch(
-  () => noteDialogVisible.value,
-  (val) => {
-    state.loading = true;
-
-    useDialogUXLock(noteDialogVisible);
-  }
-);
 </script>
 
 <template>

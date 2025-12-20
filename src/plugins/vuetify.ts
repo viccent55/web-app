@@ -10,6 +10,11 @@ import colors from "vuetify/util/colors";
 const vuetify = createVuetify({
   components,
   directives,
+  defaults: {
+    VDialog: {
+      scrollStrategy: "reposition",
+    },
+  },
   icons: {
     defaultSet: "mdi",
     aliases,

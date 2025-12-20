@@ -9,7 +9,6 @@ import { detail, like, collect } from "@/service/forbidden";
 import BottomAction from "./comp/BottomAction.vue";
 import { adsClick } from "@/service/advert";
 import { getCurrentDomain } from "@/service";
-import { useDialogUXLock } from "@/hooks/useDialogUXLock";
 import { useDisplay } from "vuetify";
 import useVariable from "@/composables/useVariable";
 import useSnackbar from "@/composables/useSnackbar";
@@ -26,7 +25,7 @@ const state = reactive({
 });
 const snackbar = useSnackbar();
 const onOpenNoteDialog = async () => {
-  if (noteDIalogRef.value) noteDIalogRef.value.scrollTop = 0;
+  // if (noteDIalogRef.value) noteDIalogRef.value.scrollTop = 0;
   loading.value = true;
   try {
     const request = {
@@ -108,12 +107,7 @@ const handle = {
     });
   },
 };
-watch(
-  () => noteDialogVisible.value,
-  (val) => {
-    useDialogUXLock(noteDialogVisible);
-  }
-);
+
 </script>
 
 <template>

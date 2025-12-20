@@ -12,12 +12,10 @@ import CommentBlock from "./comp/CommentBlock.vue";
 import BottomAction from "./comp/BottomAction.vue";
 import { adsClick } from "@/service/advert";
 import { getCurrentDomain } from "@/service";
-import { useDialogUXLock } from "@/hooks/useDialogUXLock";
 import { useDisplay } from "vuetify";
 import useVariable from "@/composables/useVariable";
 import useSnackbar from "@/composables/useSnackbar";
 
-const noteDIalogRef = useTemplateRef("note-dialog");
 const bottomRef = useTemplateRef("bottomActions");
 const { store, onCopy, route } = useVariable();
 const loading = ref(false);
@@ -29,7 +27,6 @@ const state = reactive({
 const snackbar = useSnackbar();
 const contentArticleRef = useTemplateRef("content-article");
 const onOpenNoteDialog = async () => {
-  if (noteDIalogRef.value) noteDIalogRef.value.scrollTop = 0;
   loading.value = true;
   try {
     const request = {
@@ -148,17 +145,12 @@ const getStyle = computed(() =>
     ? "scrollbar-width: none; margin-bottom: 10px"
     : "max-height: calc(100vh - 200px); overflow-y: scroll"
 );
-watch(
-  () => noteDialogVisible.value,
-  (val) => {
-    useDialogUXLock(noteDialogVisible);
-  }
-);
+
 </script>
 
 <template>
-  <v-dialog v-model="noteDialogVisible" max-width="1200"  height="100%" @after-enter="onOpenNoteDialog"
-    scrollable :fullscreen="smAndDown">
+  <v-dialog v-model="noteDialogVisible" max-width="1200" height="100%" @after-enter="onOpenNoteDialog" scrollable
+    :fullscreen="smAndDown">
     <v-card :loading="loading" class="main-contain">
       <v-card-title v-if="smAndDown">
         <v-btn icon density="compact" @click="noteDialog.closeNoteDialog()" color="surface">
@@ -188,7 +180,7 @@ watch(
             </div>
 
             <!-- Scrollable Content Area -->
-            <div class="flex-grow-1 px-4 pb-4 pb-md-0 right-side" ref="note-dialog">
+            <div class="flex-grow-1 px-4 pb-4 pb-md-0 right-side">
               <div class="text-body-2 text-grey-darken-1 mb-4">
                 发布日期: {{ state.data?.created_at?.split("T")[0] }}
               </div>

@@ -57,7 +57,6 @@ const handleItemClick = (item: any) => {
 const onScroll = (e: Event) => {
   const target = e.target as HTMLElement;
   const threshold = 200; // px before bottom
-
   if (target.scrollTop + target.clientHeight >= target.scrollHeight - threshold) {
     emits("load-more");
   }

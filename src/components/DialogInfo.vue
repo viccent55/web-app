@@ -45,7 +45,7 @@ defineExpose({
 </script>
 
 <template>
-  <v-dialog v-model="dialogVisible" :max-width="screenMode === 'phone' ? '90%' : '700px'" persistent scrollable>
+  <v-dialog v-model="dialogVisible" :max-width="screenMode === 'phone' ? '90%' : '700px'" scrollable>
     <v-card :loading="loading">
       <!-- Header -->
       <v-card-title class="d-flex justify-end">
