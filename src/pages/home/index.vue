@@ -2,7 +2,9 @@
 import ExplorePageContent from "@/components/explore/PageContent.vue";
 
 const pageContent = useTemplateRef('page-content')
-
+const onRefresh = () => {
+  pageContent.value?.resetAndFetch()
+}
 onMounted(() => {
   pageContent.value?.initialize()
 })
@@ -14,6 +16,8 @@ onMounted(() => {
     <v-card flat color="transparent">
       <ExplorePageContent ref="page-content" />
     </v-card>
+    <v-fab class="fab" po icon="mdi-refresh" color="primary" size="small" @click="onRefresh" />
+
   </v-container>
 </template>
 

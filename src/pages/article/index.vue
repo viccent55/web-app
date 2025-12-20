@@ -78,6 +78,12 @@ function onIntersect(isIntersecting: boolean) {
     onLoadMore();
   }
 }
+const onRefresh = () => {
+  state.page = 1;
+  state.isNoMore = false;
+  state.data = [];
+  fetchArticle();
+};
 onMounted(() => {
   fetchArticle()
 });
@@ -122,6 +128,7 @@ onMounted(() => {
         threshold: 0.1,
       },
     }" />
+    <v-fab class="fab" po icon="mdi-refresh" color="primary" size="small" @click="onRefresh" />
   </v-container>
 </template>
 

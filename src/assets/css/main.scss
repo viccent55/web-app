@@ -126,3 +126,31 @@ html {
 .w-100 {
   width: 100%;
 }
+
+.fab,
+.scroll-to-top {
+  position: fixed;
+  right: 10px;
+  z-index: 99;
+}
+
+.fab {
+  bottom: 80px;
+}
+
+.scroll-to-top {
+  bottom: 130px;
+}
+
+/* Desktop overrides */
+@media (min-width: 960px) {
+  .fab {
+    bottom: 30px;
+    right: 30px;
+  }
+
+  .scroll-to-top {
+    bottom: 80px;
+    right: 30px;
+  }
+}

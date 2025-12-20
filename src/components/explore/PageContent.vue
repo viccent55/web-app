@@ -144,6 +144,7 @@ defineExpose({
   initialize: async () => {
     await resetAndFetch();
   },
+  resetAndFetch,
 });
 // onMounted(async () => {
 //   await resetAndFetch();
@@ -160,7 +161,7 @@ defineExpose({
 <style scoped lang="scss">
 .page-content-container {
   height: 100%;
-  max-height: calc(100vh - 150px);
+  // max-height: calc(100vh - 150px);
   display: flex;
   flex-direction: column;
   /* make this element scrollable */

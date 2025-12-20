@@ -186,38 +186,10 @@ onMounted(() => {
     <AnalyticsLoader :analytics="store.configuration?.analytics" />
     <!-- Floating FAB -->
     <div>
-      <v-fab class="fab" icon="mdi-refresh" size="small" @click="reloadPage()" />
+      <!-- <v-fab class="fab" icon="mdi-refresh" size="small" @click="reloadPage()" /> -->
       <v-fab v-if="showButton" class="scroll-to-top" size="small" icon="mdi-arrow-up" @click="scrollToTop" />
     </div>
 
   </v-app>
 </template>
-<style scoped>
-.fab,
-.scroll-to-top {
-  position: fixed;
-  right: 10px;
-  z-index: 99;
-}
-
-.fab {
-  bottom: 80px;
-}
-
-.scroll-to-top {
-  bottom: 130px;
-}
-
-/* Desktop overrides */
-@media (min-width: 960px) {
-  .fab {
-    bottom: 30px;
-    right: 30px;
-  }
-
-  .scroll-to-top {
-    bottom: 80px;
-    right: 30px;
-  }
-}
-</style>
+<style scoped></style>
