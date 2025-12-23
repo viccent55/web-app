@@ -39,6 +39,18 @@
       if (response.data?.errcode === 0 && Array.isArray(response.data.data)) {
         return response.data;
       }
+      if (response.errcode === 70001) {
+        noteDialog.closeNoteDialog();
+        store.ruleTip.isOpen = true;
+        store.ruleTip.text = response.info;
+        return;
+      }
+      if (response.errcode === 70002) {
+        noteDialog.closeNoteDialog();
+        store.ruleTip.isOpen = true;
+        store.ruleTip.text = response.info;
+        return;
+      }
     } catch (err) {
       console.error("fetchFeeds failed:", err);
     } finally {

@@ -3,7 +3,7 @@ import service from "@/utils/request";
 export async function articlList(params: object) {
   return await service.post("/scand/select", params);
 }
-export async function detail(params: object) {
+export async function detail(params: object): Promise<EmptyObjectType> {
   return await service.post("/scand/detail", params);
 }
 

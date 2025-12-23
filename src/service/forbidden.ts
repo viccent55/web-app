@@ -3,7 +3,7 @@ import service from "@/utils/request";
 export async function select(params: object) {
   return await service.post("/forbiddenVideo/select", params);
 }
-export async function detail(params: object) {
+export async function detail(params: object): Promise<EmptyObjectType> {
   return service.post("/forbiddenVideo/detail", params);
 }
 
