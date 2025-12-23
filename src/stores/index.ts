@@ -22,6 +22,10 @@ export const useStore = defineStore("store", {
       channel: "",
       popupNotice: [] as EmptyArrayType,
       ads: {} as EmptyObjectType,
+      ruleTip: {
+        isOpen: false,
+        text: "",
+      },
     };
   },
   actions: {

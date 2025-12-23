@@ -5,10 +5,12 @@ import qs from "qs";
 import { Session } from "@/utils/storage";
 import { Notify } from "@/stores/notification";
 import router from "@/router";
-import { injectedEnv } from "@/bootstrap";
 import { appendToken, refreshAccessToken, removeToken } from "@/hooks/useJWT";
 import { encrypt, decrypt, makeSign } from "@/utils/crypto";
 import { useUserStore } from "@/stores/user";
+
+//testing api
+const test_env = false;
 
 const service: AxiosInstance = axios.create({
   timeout: 10000,
@@ -24,7 +26,9 @@ const service: AxiosInstance = axios.create({
 service.interceptors.request.use(
   async (config: any) => {
     const api =
-      (window as any).__API_ENDPOINT__ || import.meta.env.VITE_PROD_API_BASE;
+      (window as any).__API_ENDPOINT__ || test_env
+        ? import.meta.env.VITE_MEMBER_API_BASE
+        : import.meta.env.VITE_PROD_API_BASE;
     if (api) {
       config.baseURL = `${api}/apiv1`;
     }
@@ -38,7 +42,9 @@ service.interceptors.request.use(
     if (import.meta.env.MODE === "development") {
       console.log("Request:", config.url, config.data);
     }
-
+    if (test_env) {
+      return config;
+    }
     // 避免在重试时二次加密：只有还没加密过的才加密
     if (config.data && !config._isEncrypted) {
       config._isEncrypted = true; // 自定义标记，防止二次加密
@@ -67,7 +73,9 @@ service.interceptors.response.use(
       userStore.logout();
       Notify.error(response.data.info);
     }
-
+    if (test_env) {
+      return response.data;
+    }
     if (response.status === 200) {
       // decrypt only if response contains "data"
       if (response.data?.data) {

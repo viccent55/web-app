@@ -11,8 +11,8 @@ export default function useConfiguration() {
     try {
       state.loading = true;
       const response = await getConfiguration({});
-      state.configuration = response.data;
-      store.configuration = response.data;
+      state.configuration = response?.data;
+      store.configuration = response?.data;
     } catch (e) {
       console.log(e);
     } finally {

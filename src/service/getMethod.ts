@@ -4,7 +4,11 @@ import { encrypt, makeSign } from "@/utils/crypto";
 import dayjs from "dayjs";
 import { useUserStore } from "@/stores/user";
 
-const apiEndPoint = import.meta.env.VITE_PROD_API_BASE;
+const test_env = false;
+
+const apiEndPoint = test_env
+  ? import.meta.env.VITE_MEMBER_API_BASE
+  : import.meta.env.VITE_PROD_API_BASE;
 
 export async function gePostionAds(id: number): Promise<EmptyObjectType> {
   try {
@@ -24,7 +28,7 @@ export async function getConfiguration(): Promise<EmptyObjectType> {
   try {
     const { encryptData } = useDecryption();
     const res = await axios.get(`${apiEndPoint}/apiv1/index/config`);
-    if (res.data) {
+    if (res.data && !test_env) {
       const decrypted = encryptData(res.data);
       res.data = decrypted;
     }
@@ -37,7 +41,7 @@ export async function getUserInfo(id: number): Promise<EmptyObjectType> {
   try {
     const { encryptData } = useDecryption();
     const res = await axios.get(`${apiEndPoint}/apiv1/index/userinfo-${id}`);
-    if (res.data) {
+    if (res.data && !test_env) {
       const decrypted = encryptData(res.data);
       res.data = decrypted;
     }
@@ -51,7 +55,7 @@ export async function getPageInfo(pageName: string): Promise<EmptyObjectType> {
   try {
     const { encryptData } = useDecryption();
     const res = await axios.get(`${apiEndPoint}/apiv1/article-${pageName}`);
-    if (res.data) {
+    if (res.data && !test_env) {
       const decrypted = encryptData(res.data);
       res.data = decrypted;
     }
@@ -68,7 +72,8 @@ export async function getNoteDetail(
   try {
     const { encryptData } = useDecryption();
     const res = await axios.get(`${apiEndPoint}/apiv1/item/${id}/${visitor}`);
-    if (res.data) {
+
+    if (res.data?.data) {
       const decrypted = encryptData(res.data);
       res.data = decrypted;
     }

@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import Image from "@/components/Image.vue";
 import { useDisplay } from "vuetify";
-import VideoPlayer from "@/components/Video.vue";
+import VideoPlayer from "@/components/Videojs.vue";
 
 const props = defineProps({
   mediaInfo: {

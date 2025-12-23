@@ -432,7 +432,7 @@
 
   .checkpoint-btn {
     position: fixed;
-    bottom: 180px;
+    bottom: 230px;
     right: 10px;
     z-index: 11;
     @extend .point-bg; // if you use SCSS; or just copy the properties
@@ -446,5 +446,16 @@
     background-size: cover;
     background-repeat: no-repeat;
     cursor: pointer;
+  }
+
+  /* Desktop overrides */
+  @media (min-width: 960px) {
+    .checkpoint-btn {
+      position: fixed;
+      bottom: 180px;
+      right: 30px;
+      z-index: 11;
+      @extend .point-bg;
+    }
   }
 </style>
