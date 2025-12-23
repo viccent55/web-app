@@ -10,7 +10,7 @@ import { encrypt, decrypt, makeSign } from "@/utils/crypto";
 import { useUserStore } from "@/stores/user";
 
 //testing api
-const test_env = false;
+const test_env = true;
 
 const service: AxiosInstance = axios.create({
   timeout: 10000,

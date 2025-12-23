@@ -4,7 +4,7 @@ import { encrypt, makeSign } from "@/utils/crypto";
 import dayjs from "dayjs";
 import { useUserStore } from "@/stores/user";
 
-const test_env = false;
+const test_env = true;
 
 const apiEndPoint = test_env
   ? import.meta.env.VITE_MEMBER_API_BASE
