@@ -48,6 +48,7 @@
         page: state.page,
         limit: state.limit,
         keyword: state.keyword,
+        visitor: storeUser.visitCode,
       };
       if (state.cid !== 0) {
         request.cid = state.cid;
@@ -148,7 +149,7 @@
   };
   onMounted(async () => {
     await getAllCategories();
-    if (storeUser.isLogin) {
+    if (storeUser.isLogin && storeUser.userInfo?.invite_count >= 3) {
       const items = await fetchData(); // ✅ assign result
       state.data = items; // ✅ initial list filled
     }

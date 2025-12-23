@@ -17,7 +17,7 @@ _
   import useSnackbar from "@/composables/useSnackbar";
 
   const bottomRef = useTemplateRef("bottomActions");
-  const { store, onCopy, route } = useVariable();
+  const { store, storeUser, onCopy, route } = useVariable();
   const loading = ref(false);
   const noteDialog = useNoteArticleDialog();
   const state = reactive({
@@ -31,6 +31,7 @@ _
     try {
       const request = {
         id: noteDialog.id.value,
+        visitor: storeUser.visitCode,
       };
       const response = await detail(request);
       if (response.data) {

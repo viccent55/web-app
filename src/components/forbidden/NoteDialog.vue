@@ -16,7 +16,7 @@
   import VideoPlayer from "@/components/Videojs.vue";
 
   const noteDIalogRef = useTemplateRef("note-dialog");
-  const { store, onCopy, route, formatDate } = useVariable();
+  const { store, onCopy, route, formatDate, storeUser } = useVariable();
   const { smAndDown } = useDisplay();
   const loading = ref(false);
   const noteDialog = useNoteForbidden();
@@ -31,6 +31,7 @@
     try {
       const request = {
         id: noteDialog.id.value,
+        visitor: storeUser.visitCode,
       };
       const response = await detail(request);
       if (response.data) {
