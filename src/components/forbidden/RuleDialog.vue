@@ -2,8 +2,9 @@
   import { checkPermissions } from "@/hooks/usePermisions";
   import { PERMISSION } from "@/common/permision";
   import useVariable from "@/composables/useVariable";
-  import { openPage, getCurrentDomain } from "@/service/index";
+  import { getCurrentDomain } from "@/service/index";
   import useSnackbar from "@/composables/useSnackbar";
+  import { openLoginDialog } from "@/hooks/useLoginDialog";
 
   const props = defineProps({
     modelValue: Boolean,
@@ -30,9 +31,7 @@
   );
 
   const onGotoRegister = (url: string = "") => {
-    checkPermissions(PERMISSION.User, () => {
-      openPage(url);
-    });
+    openLoginDialog();
   };
   const onInvite = () => {
     checkPermissions(PERMISSION.User, () => {
