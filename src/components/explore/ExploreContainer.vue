@@ -133,7 +133,7 @@
       }"
     />
     <ExploreLoading
-      class="pb-8 pb-md-5"
+      class="pb-6 pb-md-2"
       :loading="isLoadingAny"
     />
 
@@ -156,7 +156,7 @@
     flex-grow: 1;
     overflow-y: auto;
     scrollbar-width: none;
-    padding-bottom: 40px;
+    padding-bottom: 80px;
   }
 
   .feeds-container::-webkit-scrollbar {
