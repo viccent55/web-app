@@ -27,7 +27,7 @@
     () => router.currentRoute,
     (val) => {
       if (val.value?.fullPath == "/forbidden") {
-        if (storeUser.userInfo?.invite_count < 5 || !storeUser.isLogin)
+        if (storeUser.userInfo?.invite_count < 3 || !storeUser.isLogin)
           isVisible.value = true;
       }
     },
