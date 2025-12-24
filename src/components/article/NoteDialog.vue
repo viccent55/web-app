@@ -15,6 +15,7 @@ _
   import { useDisplay } from "vuetify";
   import useVariable from "@/composables/useVariable";
   import useSnackbar from "@/composables/useSnackbar";
+  import { openLoginDialog } from "@/hooks/useLoginDialog";
 
   const bottomRef = useTemplateRef("bottomActions");
   const { store, storeUser, onCopy, route } = useVariable();
@@ -44,7 +45,7 @@ _
       }
       if (response.errcode === 70001) {
         noteDialog.closeNoteDialog();
-        store.ruleTip.isOpen = true;
+        openLoginDialog();
         store.ruleTip.text = response.info;
         return;
       }

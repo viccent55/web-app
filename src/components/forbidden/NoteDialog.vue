@@ -14,6 +14,7 @@
   import useSnackbar from "@/composables/useSnackbar";
   import { screenMode } from "@/hooks/useScreenMode";
   import VideoPlayer from "@/components/Video.vue";
+  import { openLoginDialog } from "@/hooks/useLoginDialog";
 
   const noteDIalogRef = useTemplateRef("note-dialog");
   const { store, onCopy, route, formatDate, storeUser } = useVariable();
@@ -42,7 +43,7 @@
       }
       if (response.errcode === 70001) {
         noteDialog.closeNoteDialog();
-        store.ruleTip.isOpen = true;
+        openLoginDialog();
         store.ruleTip.text = response.info;
         return;
       }

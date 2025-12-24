@@ -28,7 +28,6 @@
     get: () => props.modelValue,
     set: (v) => emit("update:modelValue", v),
   });
-
   const getGameRegister = async () => {
     try {
       state.loading = true;
@@ -44,7 +43,9 @@
   };
   const onRegister = () => {
     checkPermissions(PERMISSION.User, () => {
-      openPage(state.gameRegLink);
+      openPage(
+        `${state.gameRegLink}?userid=${storeUser.useId}&chan=${storeUser.visitCode}`
+      );
     });
   };
 
