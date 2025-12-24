@@ -4,7 +4,8 @@
   import useVariable from "@/composables/useVariable";
   import { getCurrentDomain } from "@/service/index";
   import useSnackbar from "@/composables/useSnackbar";
-  import { openLoginDialog } from "@/hooks/useLoginDialog";
+  import { openPage } from "@/service";
+  import { getConfigs } from "@/service/user";
 
   const props = defineProps({
     modelValue: Boolean,
@@ -17,6 +18,11 @@
     get: () => props.modelValue,
     set: (v) => emit("update:modelValue", v),
   });
+  const state = reactive({
+    gameRegLink: "",
+    loading: false,
+  });
+
   watch(
     () => router.currentRoute,
     (val) => {
@@ -29,9 +35,25 @@
       deep: true,
     }
   );
-
-  const onGotoRegister = (url: string = "") => {
-    openLoginDialog();
+  const getGameRegister = async () => {
+    try {
+      state.loading = true;
+      const res = await getConfigs({
+        name: "game_reg_url",
+      });
+      state.gameRegLink = res.data?.game_reg_url ?? "";
+    } catch (error) {
+      console.error("Login failed:", error);
+    } finally {
+      state.loading = false;
+    }
+  };
+  const onRegister = () => {
+    checkPermissions(PERMISSION.User, () => {
+      openPage(
+        `${state.gameRegLink}?userid=${storeUser.useId}&chan=${storeUser.visitCode}`
+      );
+    });
   };
   const onInvite = () => {
     checkPermissions(PERMISSION.User, () => {
@@ -41,6 +63,7 @@
       snackbar.showSnackbar("邀请码已复制！", "success", "center");
     });
   };
+  onMounted(() => getGameRegister());
 </script>
 <template>
   <v-card
@@ -49,17 +72,20 @@
   >
     <v-card-text>
       <div class="text-center text-primary text-subtitle-1">
-        全球禁区中心包含: 真实强奸，稀缺幼女，萝莉岛，N号房，缅北内
+        <div class="text-h6 font-weight-bold mb-2">全球禁区中心包含:</div>
+        真实强奸，稀缺幼女，萝莉岛，N号房，缅北内
         幕，血腥战场，新冠真相，真实奸杀，封杀事件 累计资源超300W部视频
       </div>
 
-      <div class="d-flex flex-column my-2">
-        <div class="text-center text-warning text-subtitle-1">
-          成功邀请3人或注册app
+      <div class="d-flex flex-column my-3">
+        <div class="text-center text- text-subtitle-1">
+          分享邀请
+          <strong class="text-error">3</strong>
+          个好友或分享
+          <strong class="text-error">2</strong>
+          个好友加注册
         </div>
-        <div class="text-center text-warning text-subtitle-2">
-          即可免费观看禁区内容
-        </div>
+        <div class="text-center text-subtitle-2">可解锁全站视频无限观看</div>
       </div>
 
       <v-card-actions>
@@ -70,7 +96,7 @@
               block
               rounded="xl"
               variant="elevated"
-              @click="onGotoRegister"
+              @click="onRegister"
             >
               去注册
             </v-btn>
