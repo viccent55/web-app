@@ -43,7 +43,9 @@
     }
   };
   const onRegister = () => {
-    openPage(state.gameRegLink);
+    checkPermissions(PERMISSION.User, () => {
+      openPage(state.gameRegLink);
+    });
   };
 
   const onShare = () => {
