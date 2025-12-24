@@ -24,7 +24,7 @@
     >
       <v-avatar
         size="70"
-        class="elevation-2"
+        class="elevation-2 bg-none"
       >
         <v-img
           src="/users/reward.png"

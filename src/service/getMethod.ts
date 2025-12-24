@@ -14,7 +14,7 @@ export async function gePostionAds(id: number): Promise<EmptyObjectType> {
   try {
     const { encryptData } = useDecryption();
     const res = await axios.get(`${apiEndPoint}/apiv1/advert/${id}`);
-    if (res.data) {
+    if (res.data && !test_env) {
       const decrypted = encryptData(res.data);
       res.data = decrypted;
     }
@@ -73,7 +73,7 @@ export async function getNoteDetail(
     const { encryptData } = useDecryption();
     const res = await axios.get(`${apiEndPoint}/apiv1/item/${id}/${visitor}`);
 
-    if (res.data?.data) {
+    if (res.data?.data && !test_env) {
       const decrypted = encryptData(res.data);
       res.data = decrypted;
     }
@@ -90,7 +90,7 @@ export async function getNoteFeeds(
   try {
     const { encryptData } = useDecryption();
     const res = await axios.get(`${apiEndPoint}/apiv1/item/user-${id}/${page}`);
-    if (res.data) {
+    if (res.data?.data && !test_env) {
       const decrypted = encryptData(res.data);
       res.data = decrypted;
     }
