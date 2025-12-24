@@ -4,8 +4,9 @@
   import { checkPermissions } from "@/hooks/usePermisions";
   import { PERMISSION } from "@/common/permision";
   import useVariable from "@/composables/useVariable";
-  import { getCurrentDomain } from "@/service";
+  import { getCurrentDomain, openPage } from "@/service";
   import useSnackbar from "@/composables/useSnackbar";
+  import { getConfigs } from "@/service/user";
 
   const props = withDefaults(
     defineProps<{
@@ -18,15 +19,31 @@
   const { store, onCopy, storeUser } = useVariable();
   const snackbar = useSnackbar();
   const emit = defineEmits(["update:modelValue", "register", "share"]);
+  const state = reactive({
+    gameRegLink: "",
+    loading: false,
+  });
 
   const visible = computed({
     get: () => props.modelValue,
     set: (v) => emit("update:modelValue", v),
   });
 
+  const getGameRegister = async () => {
+    try {
+      state.loading = true;
+      const res = await getConfigs({
+        name: "game_reg_url",
+      });
+      state.gameRegLink = res.data?.game_reg_url ?? "";
+    } catch (error) {
+      console.error("Login failed:", error);
+    } finally {
+      state.loading = false;
+    }
+  };
   const onRegister = () => {
-    visible.value = false;
-    openLoginDialog();
+    openPage(state.gameRegLink);
   };
 
   const onShare = () => {
@@ -43,12 +60,14 @@
   <v-dialog
     v-model="visible"
     max-width="360"
+    @after-enter="getGameRegister"
   >
     <v-card
       rounded="xl"
       elevation="0"
       class="pa-5 text-center"
       color="surface"
+      :loading="state.loading"
     >
       <div class="text-h6 font-weight-bold">温馨提示</div>
 
@@ -74,6 +93,7 @@
           color="red"
           variant="flat"
           rounded="pill"
+          :disabled="state.loading"
           @click="onRegister"
         >
           去注册
