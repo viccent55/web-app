@@ -13,7 +13,7 @@
   import useVariable from "@/composables/useVariable";
   import useSnackbar from "@/composables/useSnackbar";
   import { screenMode } from "@/hooks/useScreenMode";
-  import VideoPlayer from "@/components/Video.vue";
+  import VideoPlayer from "@/components/Videojs.vue";
 
   const noteDIalogRef = useTemplateRef("note-dialog");
   const { store, onCopy, route, formatDate, storeUser } = useVariable();
