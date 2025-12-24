@@ -99,7 +99,9 @@
       const response = await prepareRegister(request);
       if (response.errcode === 0) {
         snackbar.showSnackbar("已申请注册!", "success", "top");
+        storeUser.login(response.data?.token, response.data?.userinfo);
         resetRegisterForm();
+        loginDialogVisible.value = false;
         state.isLogin = true;
         storeUser.isUseToRegister = true;
       } else {
