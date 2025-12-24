@@ -24,6 +24,7 @@
   import useVariable from "@/composables/useVariable";
   import { screenMode } from "@/hooks/useScreenMode";
   import useSnackbar from "@/composables/useSnackbar";
+  import { openLoginDialog } from "@/hooks/useLoginDialog";
 
   //state
   const noteDIalogRef = useTemplateRef("note-dialog");
@@ -83,8 +84,8 @@
       } else {
         if (response.errcode === 70001) {
           noteDialog.closeNoteDialog();
-          store.ruleTip.isOpen = true;
           store.ruleTip.text = response.info;
+          openLoginDialog();
           return;
         }
         if (response.errcode === 70002) {
