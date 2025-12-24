@@ -70,6 +70,7 @@
         storeUser.login(response.data?.token, response.data?.userinfo);
         snackbar.showSnackbar("登录成功", "success", "top");
         closeLoginDialog();
+        store.ruleTip.isOpen = false;
       } else {
         snackbar.showSnackbar(response.info, "error", "top");
       }
@@ -104,6 +105,7 @@
         loginDialogVisible.value = false;
         state.isLogin = true;
         storeUser.isUseToRegister = true;
+        store.ruleTip.isOpen = false;
       } else {
         snackbar.showSnackbar(response.info, "error", "top");
       }
