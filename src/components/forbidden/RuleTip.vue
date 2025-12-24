@@ -41,10 +41,31 @@
       state.loading = false;
     }
   };
+  function appendQuery(url: string, params: Record<string, string | number>) {
+    if (!url) return url;
+
+    const [base, hash = ""] = url.split("#");
+
+    // build query string
+    const query = new URLSearchParams(params).toString();
+
+    // no hash route
+    if (!hash) {
+      return base + (base.includes("?") ? "&" : "?") + query;
+    }
+
+    // hash route (SPA style)
+    const hashHasQuery = hash.includes("?");
+
+    return `${base}#${hash}${hashHasQuery ? "&" : "?"}${query}`;
+  }
+
   const onRegister = () => {
     checkPermissions(PERMISSION.User, () => {
       openPage(
-        `${state.gameRegLink}?userid=${storeUser.useId}&chan=${storeUser.visitCode}`
+        appendQuery(state.gameRegLink, {
+          userid: storeUser.useId,
+        })
       );
     });
   };
