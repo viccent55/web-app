@@ -26,7 +26,7 @@ const service: AxiosInstance = axios.create({
 service.interceptors.request.use(
   async (config: any) => {
     const api =
-      (window as any).__API_ENDPOINT__ || test_env
+      (window as any).__API_ENDPOINT__
         ? import.meta.env.VITE_MEMBER_API_BASE
         : import.meta.env.VITE_PROD_API_BASE;
     if (api) {
