@@ -40,14 +40,14 @@ const itemClick = (app: any) => {
       </v-slide-group-item>
     </v-slide-group>
     <!-- Ads Grid -->
-    <div class="gap-1 mb-3">
+    <!-- <div class="gap-1 mb-3">
       <a v-for="(app, index) in store?.homeAds" :key="index" :href="app.url" target="_blank" rel="noopener noreferrer"
         class="flex flex-col items-center space-y-2 hover:opacity-80" @click="itemClick(app)" v-show="index < 10">
         <AdvertSlot :advert="{ title: app.name, image: app.image, url: app?.url }" fit="cover"
           style="width: 55px; height: 55px" />
         <span class="text-xs info">{{ app.name }}</span>
       </a>
-    </div>
+    </div> -->
   </div>
 </template>
 

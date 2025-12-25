@@ -4,17 +4,14 @@ import { encrypt, makeSign } from "@/utils/crypto";
 import dayjs from "dayjs";
 import { useUserStore } from "@/stores/user";
 
-const test_env = true;
-
-const apiEndPoint = test_env
-  ? import.meta.env.VITE_MEMBER_API_BASE
-  : import.meta.env.VITE_PROD_API_BASE;
+const apiEndPoint = import.meta.env.VITE_PROD_API_BASE;
+const isOnline = import.meta.env.VITE_ONLINE === "true";
 
 export async function gePostionAds(id: number): Promise<EmptyObjectType> {
   try {
     const { encryptData } = useDecryption();
     const res = await axios.get(`${apiEndPoint}/apiv1/advert/${id}`);
-    if (res.data && !test_env) {
+    if (res.data && isOnline) {
       const decrypted = encryptData(res.data);
       res.data = decrypted;
     }
@@ -28,7 +25,7 @@ export async function getConfiguration(): Promise<EmptyObjectType> {
   try {
     const { encryptData } = useDecryption();
     const res = await axios.get(`${apiEndPoint}/apiv1/index/config`);
-    if (res.data && !test_env) {
+    if (res.data && isOnline) {
       const decrypted = encryptData(res.data);
       res.data = decrypted;
     }
@@ -41,7 +38,7 @@ export async function getUserInfo(id: number): Promise<EmptyObjectType> {
   try {
     const { encryptData } = useDecryption();
     const res = await axios.get(`${apiEndPoint}/apiv1/index/userinfo-${id}`);
-    if (res.data && !test_env) {
+    if (res.data && isOnline) {
       const decrypted = encryptData(res.data);
       res.data = decrypted;
     }
@@ -55,7 +52,7 @@ export async function getPageInfo(pageName: string): Promise<EmptyObjectType> {
   try {
     const { encryptData } = useDecryption();
     const res = await axios.get(`${apiEndPoint}/apiv1/article-${pageName}`);
-    if (res.data && !test_env) {
+    if (res.data && isOnline) {
       const decrypted = encryptData(res.data);
       res.data = decrypted;
     }
@@ -73,9 +70,12 @@ export async function getNoteDetail(
     const { encryptData } = useDecryption();
     const res = await axios.get(`${apiEndPoint}/apiv1/item/${id}/${visitor}`);
 
-    if (res.data?.data && !test_env) {
+    if (res.data?.data && isOnline) {
       const decrypted = encryptData(res.data);
       res.data = decrypted;
+    }
+    if (import.meta.env.MODE === "development") {
+      console.log("Request:", `item/${id}/${visitor}`, res.data);
     }
     return res.data;
   } catch (error) {
@@ -90,7 +90,7 @@ export async function getNoteFeeds(
   try {
     const { encryptData } = useDecryption();
     const res = await axios.get(`${apiEndPoint}/apiv1/item/user-${id}/${page}`);
-    if (res.data?.data && !test_env) {
+    if (res.data?.data && isOnline) {
       const decrypted = encryptData(res.data);
       res.data = decrypted;
     }
