@@ -9,9 +9,6 @@ import { appendToken, refreshAccessToken, removeToken } from "@/hooks/useJWT";
 import { encrypt, decrypt, makeSign } from "@/utils/crypto";
 import { useUserStore } from "@/stores/user";
 
-//testing api
-const test_env = false;
-
 const service: AxiosInstance = axios.create({
   timeout: 10000,
   headers: { "Content-Type": "application/json" },
@@ -41,7 +38,7 @@ service.interceptors.request.use(
     if (import.meta.env.MODE === "development") {
       console.log("Request:", config.url, config.data);
     }
-    if (test_env) {
+    if (import.meta.env.VITE_ONLINE == "false") {
       return config;
     }
     // 避免在重试时二次加密：只有还没加密过的才加密
@@ -72,7 +69,7 @@ service.interceptors.response.use(
       userStore.logout();
       Notify.error(response.data.info);
     }
-    if (test_env) {
+    if (import.meta.env.VITE_ONLINE == "false") {
       return response.data;
     }
     if (response.status === 200) {
