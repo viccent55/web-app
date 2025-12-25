@@ -23,8 +23,6 @@
   const videoPlayer = ref<HTMLVideoElement | null>(null);
   let hls: Hls | null = null;
   const displayHeight = computed(() => props.height);
-  const videoUrl = computed(() => import.meta.env.VITE_VIDEO_XHS + props.src);
-  
   const initializePlayer = () => {
     // Clean up existing HLS instance if it exists
     if (hls) {
@@ -34,7 +32,7 @@
 
     if (Hls.isSupported() && videoPlayer.value) {
       hls = new Hls();
-      hls.loadSource(videoUrl.value);
+      hls.loadSource(props.src);
       hls.attachMedia(videoPlayer.value);
 
       // Autoplay logic
@@ -70,7 +68,7 @@
       videoPlayer.value.canPlayType("application/vnd.apple.mpegurl")
     ) {
       // Native HLS (Safari)
-      videoPlayer.value.src = videoUrl.value;
+      videoPlayer.value.src = props.src;
       videoPlayer.value.addEventListener(
         "loadedmetadata",
         () => {
