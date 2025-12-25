@@ -77,6 +77,9 @@ export async function getNoteDetail(
       const decrypted = encryptData(res.data);
       res.data = decrypted;
     }
+    if (import.meta.env.MODE === "development") {
+      console.log("Request:", `item/${id}/${visitor}`, res.data);
+    }
     return res.data;
   } catch (error) {
     return Promise.reject(error);
