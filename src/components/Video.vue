@@ -1,6 +1,8 @@
 <script setup lang="ts">
   import { ref, onMounted, onBeforeUnmount, watch } from "vue";
   import Hls from "hls.js";
+  import { useDecryption } from "@/composables/useDecryption";
+
   const props = defineProps({
     src: {
       type: String,
@@ -18,75 +20,141 @@
       type: String,
       default: () => "100%",
     },
+    poster: {
+      type: String,
+      default: () => "",
+    },
   });
 
+  const { decryptImage, decryptedImage } = useDecryption();
   const videoPlayer = ref<HTMLVideoElement | null>(null);
   let hls: Hls | null = null;
   const displayHeight = computed(() => props.height);
-  const initializePlayer = () => {
-    // Clean up existing HLS instance if it exists
+  const initializePlayer = async () => {
+    await decryptImage(props.poster);
     if (hls) {
       hls.destroy();
       hls = null;
     }
 
     if (Hls.isSupported() && videoPlayer.value) {
-      hls = new Hls();
+      hls = new Hls({
+        // =============================
+        // 🐢 Slow network optimizations
+        // =============================
+        manifestLoadingTimeOut: 15000, // 15s
+        manifestLoadingMaxRetry: 3,
+        manifestLoadingRetryDelay: 3000,
+
+        levelLoadingTimeOut: 15000,
+        levelLoadingMaxRetry: 3,
+        levelLoadingRetryDelay: 3000,
+
+        fragLoadingTimeOut: 20000,
+        fragLoadingMaxRetry: 4,
+        fragLoadingRetryDelay: 3000,
+
+        // =============================
+        // 🎥 Playback behavior
+        // =============================
+        startLevel: -1, // auto (usually lowest first)
+        capLevelToPlayerSize: true,
+        enableWorker: true,
+
+        // =============================
+        // 🧠 Stability
+        // =============================
+        lowLatencyMode: false,
+        backBufferLength: 30,
+      });
+
       hls.loadSource(props.src);
       hls.attachMedia(videoPlayer.value);
 
-      // Autoplay logic
+      // Manifest ready
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         if (props.autoplay) {
-          videoPlayer.value?.play().catch((error) => {
-            console.error("Autoplay failed:", error);
-          });
+          videoPlayer.value?.play().catch(() => {});
         }
       });
 
-      // Error handling
+      // =============================
+      // ❗ Robust error handling
+      // =============================
       hls.on(Hls.Events.ERROR, (event, data) => {
-        if (data.fatal) {
-          switch (data.type) {
-            case Hls.ErrorTypes.NETWORK_ERROR:
-              console.error("Fatal network error. Retrying...");
-              hls?.startLoad();
-              break;
-            case Hls.ErrorTypes.MEDIA_ERROR:
-              console.error("Fatal media error. Recovering...");
-              hls?.recoverMediaError();
-              break;
-            default:
-              console.error("Unrecoverable HLS error", data);
-              hls?.destroy();
-              break;
-          }
+        console.warn("[HLS ERROR]", data);
+
+        if (!data.fatal) return;
+
+        switch (data.type) {
+          case Hls.ErrorTypes.NETWORK_ERROR:
+            console.error("Network error → retrying load()");
+            hls?.startLoad();
+            break;
+
+          case Hls.ErrorTypes.MEDIA_ERROR:
+            console.error("Media error → recoverMediaError()");
+            hls?.recoverMediaError();
+            break;
+
+          default:
+            console.error("Unrecoverable error → destroy");
+            hls?.destroy();
+            hls = null;
+            break;
         }
       });
-    } else if (
+
+      // =============================
+      // ⏱ Detect MANIFEST stuck (manual)
+      // =============================
+      const manifestTimeout = setTimeout(() => {
+        if (!videoPlayer.value?.readyState) {
+          console.error("Manifest load timeout → destroy HLS");
+          hls?.destroy();
+          hls = null;
+        }
+      }, 20000); // 20s hard limit
+
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        clearTimeout(manifestTimeout);
+      });
+    }
+
+    // =============================
+    // 🍎 Safari native HLS fallback
+    // =============================
+    else if (
       videoPlayer.value &&
       videoPlayer.value.canPlayType("application/vnd.apple.mpegurl")
     ) {
-      // Native HLS (Safari)
       videoPlayer.value.src = props.src;
+
       videoPlayer.value.addEventListener(
         "loadedmetadata",
         () => {
           if (props.autoplay) {
-            videoPlayer.value?.play().catch((error) => {
-              console.error("Autoplay failed:", error);
-            });
+            videoPlayer.value?.play().catch(() => {});
           }
         },
         { once: true }
       );
+
+      // Safari safety timeout
+      setTimeout(() => {
+        if (videoPlayer.value?.readyState === 0) {
+          console.error("Safari HLS load timeout");
+          videoPlayer.value.src = "";
+        }
+      }, 20000);
     } else {
-      console.error("HLS is not supported in this browser.");
+      console.error("HLS not supported");
     }
   };
 
-  onMounted(() => {
+  onMounted(async () => {
     if (props.src) {
+      await decryptImage(props.poster);
       initializePlayer();
     }
   });
@@ -133,6 +201,7 @@
       :muted="props.muted"
       :autoplay="props.autoplay"
       playsinline
+      :poster="decryptedImage"
     ></video>
   </div>
 </template>
