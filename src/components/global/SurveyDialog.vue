@@ -12,6 +12,7 @@
   const state = reactive({
     dialog: false,
     loading: false,
+    imageLoading: false,
     form: {
       form_title: "有奖反馈",
       visitor: "",
@@ -75,8 +76,9 @@
       };
       const response = await survey(request);
       console.log(response);
-      console.log("Survey submission:", state.form);
       state.dialog = false;
+      snakbar.showSnackbar("提交成功", "success");
+      resetForm();
     } finally {
       state.loading = false;
     }
@@ -104,25 +106,29 @@
 
     const files = Array.from(target.files);
 
-    for (const file of files) {
-      // 2MB limit guard
-      if (file.size > 2 * 1024 * 1024) {
-        snakbar.showSnackbar(`图片超过 2MB ${file.name}`, "warning");
-        console.warn("Image exceeds 2MB:", file.name);
-        continue;
-      }
+    state.imageLoading = true;
+    try {
+      for (const file of files) {
+        // 2MB limit guard
+        if (file.size > 2 * 1024 * 1024) {
+          snakbar.showSnackbar(`图片超过 2MB ${file.name}`, "warning");
+          console.warn("Image exceeds 2MB:", file.name);
+          continue;
+        }
 
-      try {
-        const url = await upload(file);
-        // ✅ push returned URL only (API expects string[])
-        state.form.upload_images.push(url);
-      } catch (err) {
-        console.error("Upload failed:", err);
+        try {
+          const url = await upload(file);
+          // ✅ push returned URL only (API expects string[])
+          state.form.upload_images.push(url);
+        } catch (err) {
+          console.error("Upload failed:", err);
+        }
       }
+    } finally {
+      state.imageLoading = false;
+      // reset input so same file can be selected again
+      target.value = "";
     }
-
-    // reset input so same file can be selected again
-    target.value = "";
   };
 
   const removeImage = (index: number) => {
@@ -139,7 +145,10 @@
     :fullscreen="smAndDown"
     scrollable
   >
-    <v-card>
+    <v-card
+      :loading="state.loading"
+      flat
+    >
       <!-- Header -->
       <v-card-title
         class="text-h6 font-weight-bold d-flex justify-space-between"
@@ -474,6 +483,18 @@
                     class="position-absolute"
                     style="top: -6px; right: -6px; z-index: 1"
                     @click="removeImage(idx)"
+                  />
+                </div>
+
+                <div
+                  v-if="state.imageLoading"
+                  class="d-flex align-center justify-center rounded-lg border border-dashed"
+                  style="width: 80px; height: 80px; border-color: #ccc"
+                >
+                  <v-progress-circular
+                    indeterminate
+                    color="primary"
+                    size="24"
                   />
                 </div>
 
