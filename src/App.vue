@@ -207,7 +207,7 @@
       auto-close
     />
     <AnalyticsLoader :analytics="store.configuration?.analytics" />
-    <!-- <SurveyDialog ref="survey-dialog" /> -->
+    <SurveyDialog ref="survey-dialog" />
     <!-- <RuleTip v-model="store.ruleTip.isOpen" /> -->
     <!-- Floating FAB -->
     <div>

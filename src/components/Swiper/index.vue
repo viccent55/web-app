@@ -55,7 +55,7 @@
 </script>
 
 <template>
-  <div class="h-100 w-100">
+  <div>
     <v-carousel
       ref="carousel"
       class="swiper"

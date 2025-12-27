@@ -6,9 +6,13 @@ import { aliases, mdi } from "vuetify/iconsets/mdi";
 import "vuetify/styles";
 import "@mdi/font/css/materialdesignicons.css";
 import colors from "vuetify/util/colors";
+import { VFileUpload } from "vuetify/labs/VFileUpload";
 
 const vuetify = createVuetify({
-  components,
+  components: {
+    ...components,
+    VFileUpload,
+  },
   directives,
   defaults: {
     VDialog: {
