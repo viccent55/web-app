@@ -377,7 +377,7 @@
                         image: app.image,
                         url: app?.url,
                       }"
-                      height="100%"
+                      height="auto"
                       fit="contain"
                     />
                   </a>
