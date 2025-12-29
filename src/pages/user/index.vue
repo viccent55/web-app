@@ -114,6 +114,11 @@
       value: "telegram",
       icon: "mdi-handshake-outline",
     },
+    {
+      name: "有奖反馈",
+      value: "survey",
+      icon: "mdi-message-question",
+    },
   ];
 
   const displayMenu = computed(() => {
@@ -128,6 +133,7 @@
   const pupupData = useTemplateRef("popup-data");
   const inviteRef = useTemplateRef("inviteRef");
   const followRef = useTemplateRef("followings");
+  const surveyRef = useTemplateRef("survey-dialog");
   const onClickMenu = async (item: EmptyObjectType) => {
     if (item.value == "call") {
       return showChatWidget();
@@ -142,6 +148,8 @@
         window.open("https://t.me/HFDHG9985", "_blank"); // external
       }
       return;
+    } else if (item.value === "survey") {
+      return surveyRef.value?.open();
     }
     pupupData.value?.open(item);
   };
@@ -385,6 +393,7 @@
         :user-info="userInfo"
       />
       <UserFollowings ref="followings" />
+      <SurveyDialog ref="survey-dialog" />
     </div>
   </v-container>
 </template>
