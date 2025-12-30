@@ -211,12 +211,20 @@
     <!-- <RuleTip v-model="store.ruleTip.isOpen" /> -->
     <!-- Floating FAB -->
     <div>
-      <v-fab
-        size="small"
-        icon="mdi-help-circle-outline"
-        class="survey-fab"
+      <div
+        class="survey-fab cursor-pointer"
         @click="surveyRef?.open()"
-      />
+      >
+        <div
+          class="px-1 py-2 d-flex flex-column text-white font-weight-bold f11 align-center ga-1"
+        >
+          <v-img
+            width="20"
+            src="/reward.png"
+          ></v-img>
+          <div>有奖反馈</div>
+        </div>
+      </div>
 
       <!-- <v-fab class="fab" icon="mdi-refresh" size="small" @click="reloadPage()" /> -->
       <v-fab

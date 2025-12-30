@@ -432,7 +432,7 @@
 
   .checkpoint-btn {
     position: fixed;
-    bottom: 230px;
+    bottom: 250px;
     right: 10px;
     z-index: 11;
     @extend .point-bg; // if you use SCSS; or just copy the properties
@@ -452,7 +452,7 @@
   @media (min-width: 960px) {
     .checkpoint-btn {
       position: fixed;
-      bottom: 180px;
+      bottom: 200px;
       right: 30px;
       z-index: 11;
       @extend .point-bg;
