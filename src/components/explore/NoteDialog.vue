@@ -114,9 +114,9 @@
   };
   const handle = {
     clickAuthor(id: string) {
-      const url = `${window.location.origin}/user/${id}`;
+      const url = `${window.location.origin}/#/user/${id}`;
       window.location.href = url;
-      //   window.location.reload();
+      window.location.reload();
     },
     // 关注
     clickFollow(id: number) {
