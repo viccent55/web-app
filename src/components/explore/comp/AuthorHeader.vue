@@ -22,7 +22,7 @@
 <template>
   <div class="author-header rounded-r-2xl">
     <a
-      :href="'/user/' + author?.id"
+      :href="'/#/user/' + author?.id"
       class="text-grey-darken-1 text-decoration-none"
     >
       <Avatar :src="props.author?.avatar" />
