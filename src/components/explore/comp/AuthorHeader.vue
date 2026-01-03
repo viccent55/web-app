@@ -22,8 +22,8 @@
 <template>
   <div class="author-header rounded-r-2xl">
     <a
-      :href="'/user/' + author?.id"
-      class="text-grey-darken-1 text-decoration-none"
+      @click="$emit('click-author', author?.id)"
+      class="text-grey-darken-1 text-decoration-none cursor-pointer"
     >
       <Avatar :src="props.author?.avatar" />
       <span class="ml-2 text-body-2">{{ props.author?.nickname }}</span>
