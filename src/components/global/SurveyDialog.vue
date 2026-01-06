@@ -56,6 +56,7 @@
     };
   };
   const storeUser = useUserStore();
+  const store = useStore();
   const onClose = () => {
     state.dialog = false;
     resetForm();
@@ -134,7 +135,20 @@
   const removeImage = (index: number) => {
     state.form.upload_images.splice(index, 1);
   };
-
+  const snackbar = useSnackbar();
+  const joinTG = () => {
+    if (!store.configuration?.tg_business) {
+      return snackbar.showSnackbar("没有 Telegram 链接", "warning", "center");
+    }
+    window.open(store.configuration?.tg_business, "_blank");
+  };
+  function getTelegramUsername(url: string) {
+    try {
+      return new URL(url).pathname.replace("/", "");
+    } catch {
+      return "";
+    }
+  }
   defineExpose({ open });
 </script>
 
@@ -165,12 +179,15 @@
       <!-- Telegram (UNCHANGED) -->
       <v-card-subtitle class="text-body-2">
         <a
-          class="text-primary"
-          href="https://t.me/hanfei589"
+          class="text-primary cursor-pointer"
+          @click="joinTG"
           target="_blank"
           rel="noopener"
         >
-          @hanfei589
+          {{
+            getTelegramUsername(store.configuration?.tg_business) ||
+            "@hanfei589"
+          }}
         </a>
         ｜感谢您的反馈
       </v-card-subtitle>
