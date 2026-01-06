@@ -95,14 +95,24 @@
               color="primary"
               block
               rounded="xl"
+              size="large"
               variant="elevated"
               @click="onRegister"
+              style="
+                background: linear-gradient(135deg, #6c13d9 0%, #3794ff 100%);
+                color: #fff;
+              "
             >
+              <v-img
+                width="32px"
+                src="/forbidden/game.png"
+              ></v-img>
               去注册
             </v-btn>
           </v-col>
           <v-col cols="6">
             <v-btn
+              size="large"
               color="primary"
               block
               rounded="xl"
