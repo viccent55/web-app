@@ -5,15 +5,36 @@
 
   const snackbar = useSnackbar();
   const store = useStore();
+
+  function normalizeTelegramLink(input?: string): string {
+    if (!input) return "";
+
+    // trim spaces
+    const value = input.trim();
+
+    // already a full link
+    if (value.startsWith("http")) {
+      return value;
+    }
+
+    // starts with @username
+    if (value.startsWith("@")) {
+      return `https://t.me/${value.slice(1)}`;
+    }
+
+    // plain username
+    return `https://t.me/${value}`;
+  }
   const joinTG = () => {
-    if (!store.configuration?.tg_business) {
+    console.log(store.configuration);
+    if (!store.configuration?.tg_chan) {
       return snackbar.showSnackbar("没有 Telegram 链接", "warning", "center");
     }
-    window.open(store.configuration?.tg_business, "_blank");
+    window.open(normalizeTelegramLink(store.configuration?.tg_chan), "_blank");
   };
 
   const joinTudou = () => {
-    window.open("https://your-tudou-link.com", "_blank");
+    window.open(store.configuration?.tudou_group, "_blank");
   };
 
   const close = () => {

@@ -13,6 +13,7 @@
   import UserPersonalNote from "@/components/user/PersonalNote.vue";
   import UserDialogInvites from "@/components/user/DialogInvites.vue";
   import UserFollowings from "@/components/user/Followings.vue";
+  import GroupCenter from "@/components/user/GroupCenter.vue";
 
   const UserInfo = defineAsyncComponent(
     () => import("@/components/user/UserInfo.vue")
@@ -217,6 +218,7 @@
       });
     }
   };
+  const groupCenter = ref(false);
   onMounted(async () => {
     onInit();
     getConfig();
@@ -395,6 +397,22 @@
       <UserFollowings ref="followings" />
       <SurveyDialog ref="survey-dialog" />
     </div>
+
+    <div
+      class="group-fab cursor-pointer"
+      @click="groupCenter = true"
+    >
+      <v-avatar
+        size="64"
+        color="primary"
+      >
+        <div class="d-flex flex-column align-center justify-center">
+          <v-icon size="30">mdi-account-group</v-icon>
+          <div class="f12">福利群</div>
+        </div>
+      </v-avatar>
+      <GroupCenter v-model="groupCenter" />
+    </div>
   </v-container>
 </template>
 
@@ -455,10 +473,22 @@
     width: 100%;
   }
 
+  .group-fab {
+    position: fixed;
+    right: 10px;
+    bottom: 80px;
+    z-index: 10;
+  }
+
   @media (min-width: 960px) {
     .menu-grid {
       grid-template-columns: repeat(6, 1fr);
       /* 6 columns for desktop */
+    }
+    .group-fab {
+      position: fixed;
+      right: 28px;
+      bottom: 200px;
     }
   }
 
