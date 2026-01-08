@@ -34,7 +34,7 @@ export function useReport() {
         backendURL: import.meta.env.VITE_TRANSACTION_API_BASE,
         promoCode: getParamCode(),
         productCode: getParamE(),
-        actionType: "active",
+        actionType: "click",
       });
 
       // Save today's date
@@ -46,23 +46,6 @@ export function useReport() {
     }
   };
 
-  const getFirstVisitInApp = async () => {
-    if (store.isInstalled) return;
-    try {
-      await setConfig({
-        appId: "1234567898765432100",
-        productId: "xhslandpage",
-        backendURL: import.meta.env.VITE_TRANSACTION_API_BASE,
-        promoCode: getParamCode(),
-        productCode: getParamE(),
-        actionType: "install",
-        installCode: getInstallCode(),
-      });
-      store.isInstalled = true;
-    } catch (e) {
-      console.log(e);
-    }
-  };
   function isIOS(): boolean {
     if (typeof window === "undefined") return false;
 
@@ -87,5 +70,5 @@ export function useReport() {
       await setConfig(request);
     }
   };
-  return { runOncePerDay, getFirstVisitInApp, onReportIos };
+  return { runOncePerDay, onReportIos };
 }

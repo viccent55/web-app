@@ -143,6 +143,7 @@
   }
   const showAds = ref(getInstallCode() ? shouldShowAdsOnce() : false);
   const surveyRef = useTemplateRef("survey-dialog");
+
   onMounted(() => {
     window.addEventListener("scroll", checkScroll);
     theme.change(store.darkMode);

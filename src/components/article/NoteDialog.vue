@@ -15,7 +15,6 @@ _
   import { useDisplay } from "vuetify";
   import useVariable from "@/composables/useVariable";
   import useSnackbar from "@/composables/useSnackbar";
-  import { openLoginDialog } from "@/hooks/useLoginDialog";
 
   const bottomRef = useTemplateRef("bottomActions");
   const { store, storeUser, onCopy, route } = useVariable();
@@ -206,8 +205,8 @@ _
               <v-card-text :style="getStyle">
                 <ContentArticle
                   :content="state.data?.content"
-                  :poster="state.data?.cover"
                   ref="content-article"
+                  :poster="state.data?.cover"
                 />
               </v-card-text>
             </v-card>
