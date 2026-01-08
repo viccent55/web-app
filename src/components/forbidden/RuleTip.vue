@@ -120,7 +120,7 @@
           :disabled="state.loading"
           @click="onRegister"
         >
-          去注册
+          注册游戏
         </v-btn>
 
         <v-btn

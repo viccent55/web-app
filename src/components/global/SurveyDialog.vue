@@ -20,11 +20,11 @@
       image_loading: "",
       video_playback: "",
       functional_status: {
-        share: "normal",
-        register: "normal",
-        login: "normal",
+        share: "",
+        register: "",
+        login: "",
       },
-      feedback_type: "crash",
+      feedback_type: "",
       issue_description: "",
       upload_images: [] as any[],
     },
@@ -45,11 +45,11 @@
       image_loading: "",
       video_playback: "",
       functional_status: {
-        share: "normal",
-        register: "normal",
-        login: "normal",
+        share: "",
+        register: "",
+        login: "",
       },
-      feedback_type: "crash",
+      feedback_type: "",
       issue_description: "",
       upload_images: [],
     };
@@ -86,7 +86,7 @@
   onMounted(() => {
     if (typeof window === "undefined") return;
     if (!sessionStorage.getItem(STORAGE_KEY)) {
-      state.dialog = true;
+      // state.dialog = true;
       sessionStorage.setItem(STORAGE_KEY, "1");
     }
   });
