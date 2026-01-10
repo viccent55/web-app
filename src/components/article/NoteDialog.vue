@@ -205,7 +205,6 @@ _
               <v-card-text :style="getStyle">
                 <ContentArticle
                   :content="state.data?.content"
-                  :poster="state.data?.cover"
                   ref="content-article"
                   :poster="state.data?.cover"
                 />
