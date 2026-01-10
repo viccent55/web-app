@@ -110,6 +110,7 @@ export const useDecryption = () => {
     try {
       const fullUrl = `${cachedImageHost}${imagePath}`;
       decryptedImage.value = await decryptAndCreateUrl(fullUrl);
+      return decryptedImage.value;
     } catch (e: any) {
       error.value = e?.message || "Image decrypt failed";
     } finally {

@@ -107,7 +107,7 @@
                 width="32px"
                 src="/forbidden/game.png"
               ></v-img>
-              去注册
+              注册游戏
             </v-btn>
           </v-col>
           <v-col cols="6">

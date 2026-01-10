@@ -116,9 +116,9 @@
       icon: "mdi-handshake-outline",
     },
     {
-      name: "有奖反馈",
-      value: "survey",
-      icon: "mdi-message-question",
+      name: "福利群",
+      value: "group-center",
+      icon: "mdi-account-group",
     },
   ];
 
@@ -134,7 +134,6 @@
   const pupupData = useTemplateRef("popup-data");
   const inviteRef = useTemplateRef("inviteRef");
   const followRef = useTemplateRef("followings");
-  const surveyRef = useTemplateRef("survey-dialog");
   const onClickMenu = async (item: EmptyObjectType) => {
     if (item.value == "call") {
       return showChatWidget();
@@ -149,8 +148,8 @@
         window.open("https://t.me/HFDHG9985", "_blank"); // external
       }
       return;
-    } else if (item.value === "survey") {
-      return surveyRef.value?.open();
+    } else if (item.value === "group-center") {
+      return (groupCenter.value = true);
     }
     pupupData.value?.open(item);
   };
@@ -395,24 +394,9 @@
         :user-info="userInfo"
       />
       <UserFollowings ref="followings" />
-      <SurveyDialog ref="survey-dialog" />
     </div>
 
-    <div
-      class="group-fab cursor-pointer"
-      @click="groupCenter = true"
-    >
-      <v-avatar
-        size="64"
-        color="primary"
-      >
-        <div class="d-flex flex-column align-center justify-center">
-          <v-icon size="30">mdi-account-group</v-icon>
-          <div class="f12">福利群</div>
-        </div>
-      </v-avatar>
-      <GroupCenter v-model="groupCenter" />
-    </div>
+    <GroupCenter v-model="groupCenter" />
   </v-container>
 </template>
 
@@ -473,22 +457,10 @@
     width: 100%;
   }
 
-  .group-fab {
-    position: fixed;
-    right: 10px;
-    bottom: 80px;
-    z-index: 10;
-  }
-
   @media (min-width: 960px) {
     .menu-grid {
       grid-template-columns: repeat(6, 1fr);
       /* 6 columns for desktop */
-    }
-    .group-fab {
-      position: fixed;
-      right: 28px;
-      bottom: 200px;
     }
   }
 
