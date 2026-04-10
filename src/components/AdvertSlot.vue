@@ -6,7 +6,7 @@
     },
     aspectRatio: {
       type: Number || String,
-      default: "",
+      default: 0,
     },
     height: {
       type: String,

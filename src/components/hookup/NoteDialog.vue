@@ -16,6 +16,7 @@
   import useSnackbar from "@/composables/useSnackbar";
   import { screenMode } from "@/hooks/useScreenMode";
   import Swiper from "@/components/Swiper/index.vue";
+  import { useTawk } from "@/composables/useTawk";
 
   const { store, onCopy, route } = useVariable();
   const noteDialog = useNoteHookupDialog();
@@ -84,9 +85,11 @@
       });
     },
   };
-  const { showChatWidget } = useSnackbar();
+  // const { showChatWidget } = useSnackbar();
+  const { openChat } = useTawk();
   const onLiveChat = () => {
-    showChatWidget();
+    // showChatWidget();
+    openChat()
   };
 </script>
 
