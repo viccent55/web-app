@@ -22,6 +22,23 @@ export function useTawk() {
 
     s0.parentNode.insertBefore(s1, s0);
 
+    const observer = new MutationObserver(() => {
+        const iframe = document.querySelector('iframe[title="chat widget"]');
+        // const iframe = document.querySelector('div.widget-visible');
+
+        if (iframe) {
+            iframe.style.setProperty("bottom", "60px", "important");
+            iframe.style.setProperty("right", "0", "important");
+            // console.log('MutationObserver widget-visible : ',iframe , '🫵' , iframe.style.bottom)
+            // iframe.style.bottom = "500px !important";
+            // console.log('MutationObserver widget-visible : ',iframe , '🫵' , iframe.style.bottom)
+        }
+    });
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
     // ❗关键：不要在这里绑定 onLoad 逻辑
     waitForTawkReady();
   }
@@ -39,10 +56,27 @@ export function useTawk() {
 
           clearInterval(interval);
 
-          console.log("Tawk ready");
+        //   console.log("Tawk ready");
+
+// 自定义位置 ❌ 无效
+window.Tawk_API.customStyle = {
+  visibility: {
+    desktop: {
+      position: "br",
+      xOffset: 30,
+      yOffset: 80
+    },
+    mobile: {
+      position: "br",
+      xOffset: 10,
+      yOffset: 60
+    }
+  }
+};
+
 
           // 默认隐藏
-          window.Tawk_API.hideWidget();
+        //   window.Tawk_API.hideWidget();
 
           // 注册消息监听（这里才是正确时机）
 
@@ -54,7 +88,7 @@ export function useTawk() {
               window.Tawk_API.showWidget();
             }
           };
-        console.log(window.Tawk_API.onChatMessageVisitor )
+        // console.log(window.Tawk_API.onChatMessageVisitor )
 
           // 轮询未读（最稳定）
         //   startUnreadCheck();

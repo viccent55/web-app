@@ -380,13 +380,13 @@
           }"
         />
       </v-card-text>
-      <v-fab
+      <!-- <v-fab
         class="fab"
         icon="mdi-refresh"
         color="primary"
         size="small"
         @click="onRefresh"
-      />
+      /> -->
     </v-card>
 
     <!-- Drawers & dialogs -->
@@ -432,7 +432,7 @@
 
   .checkpoint-btn {
     position: fixed;
-    bottom: 250px;
+    bottom: 450px;
     right: 10px;
     z-index: 11;
     @extend .point-bg; // if you use SCSS; or just copy the properties

@@ -258,13 +258,13 @@
         </v-overlay>
       </v-card-text>
     </v-card>
-    <v-fab
+    <!-- <v-fab
       class="fab"
       icon="mdi-refresh"
       color="primary"
       size="small"
       @click="onRefresh"
-    />
+    /> -->
   </v-container>
 </template>
 <style scoped lang="scss">

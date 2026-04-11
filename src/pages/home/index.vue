@@ -16,7 +16,7 @@ onMounted(() => {
     <v-card flat color="transparent">
       <ExplorePageContent ref="page-content" />
     </v-card>
-    <v-fab class="fab" po icon="mdi-refresh" color="primary" size="small" @click="onRefresh" />
+    <!-- <v-fab class="fab" po icon="mdi-refresh" color="primary" size="small" @click="onRefresh" /> -->
 
   </v-container>
 </template>

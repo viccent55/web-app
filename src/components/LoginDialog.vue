@@ -10,6 +10,7 @@
   import ForgotPassword from "./ForgotPassword.vue";
   import { openPage } from "@/service";
   import useSnackbar from "@/composables/useSnackbar";
+    import { useTawk } from "@/composables/useTawk";
 
   const dialogMode = ref<"all" | "left" | "right">();
   const store = useStore();
@@ -137,9 +138,14 @@
       immediate: true,
     }
   );
-  const { showChatWidget } = useSnackbar();
+  // const { showChatWidget } = useSnackbar();
+  // const onLiveChat = () => {
+  //   showChatWidget();
+  // };
+  const { openChat } = useTawk();
   const onLiveChat = () => {
-    showChatWidget();
+    // showChatWidget();
+    openChat()
   };
 </script>
 
