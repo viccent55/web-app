@@ -43,6 +43,34 @@ export function useTawk() {
     waitForTawkReady();
   }
 
+function getVisitorId() {
+    let id = localStorage.getItem("tawk_visitor_id");
+
+    // localStorage 丢失时 fallback cookie
+    if (!id) {
+        id = getCookie("tawk_visitor_id");
+    }
+
+    // 都没有就生成
+    if (!id) {
+        id = "visitor_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9);
+
+        localStorage.setItem("tawk_visitor_id", id);
+        setCookie("tawk_visitor_id", id, 3650); // 10年
+    }
+
+    return id;
+}
+function setCookie(name, value, days) {
+    const d = new Date();
+    d.setTime(d.getTime() + (days*24*60*60*1000));
+    document.cookie = name + "=" + value + ";expires=" + d.toUTCString() + ";path=/";
+}
+function getCookie(name) {
+    const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+    return v ? v[2] : null;
+}
+
   function waitForTawkReady() {
     // console.log('123123=-=-=--⚠️');
     interval = setInterval(() => {
@@ -55,24 +83,35 @@ export function useTawk() {
         if (typeof window.Tawk_API.maximize === "function") {
 
           clearInterval(interval);
-
+          const visitorId = getVisitorId();
+          Tawk_API.setAttributes({
+              id: visitorId,
+              name: "xhs用户"+visitorId,
+              email: visitorId + "@xhs200.com"
+          }, function (error) {
+              if (error) {
+                  console.log("Tawk setAttributes error", error);
+              }else{
+                console.log("Tawk setAttributes success", visitorId);
+              }
+          });
         //   console.log("Tawk ready");
 
 // 自定义位置 ❌ 无效
-window.Tawk_API.customStyle = {
-  visibility: {
-    desktop: {
-      position: "br",
-      xOffset: 30,
-      yOffset: 80
-    },
-    mobile: {
-      position: "br",
-      xOffset: 10,
-      yOffset: 60
-    }
-  }
-};
+// window.Tawk_API.customStyle = {
+//   visibility: {
+//     desktop: {
+//       position: "br",
+//       xOffset: 30,
+//       yOffset: 80
+//     },
+//     mobile: {
+//       position: "br",
+//       xOffset: 10,
+//       yOffset: 60
+//     }
+//   }
+// };
 
 
           // 默认隐藏
