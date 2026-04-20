@@ -180,17 +180,18 @@
   });
 </script>
 <template>
-  <v-alert
+
+  <v-container
+    class="d-flex flex-column pa-0"
+    fluid
+  >
+    <v-alert
     v-model="showAlert"
     type="warning"
     title="权限警告"
     text="您没有权限 请联系客服开通权限"
     closable
   ></v-alert>
-  <v-container
-    class="d-flex flex-column pa-0"
-    fluid
-  >
     <v-card
       flat
       color="transparent"
