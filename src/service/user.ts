@@ -1,6 +1,10 @@
 import service from "@/utils/request";
 import { getUserInfo as UserInfo } from "@/service/getMethod";
 
+export async function verifyAuth(uid:number,auth:string ){
+  return service.post(`/member/verifyAuth`, {uid:uid,auth:auth});
+}
+
 export async function getUserInfo(id: number): Promise<EmptyObjectType> {
   const res = await UserInfo(id);
   return res;

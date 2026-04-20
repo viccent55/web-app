@@ -6,14 +6,35 @@
   import useSnackbar from "@/composables/useSnackbar";
   import { openPage } from "@/service";
   import { getConfigs } from "@/service/user";
+  import { useTawk } from "@/composables/useTawk";
+  import { openLoginDialog } from "@/hooks/useLoginDialog";
+
 
   const props = defineProps({
     modelValue: Boolean,
   });
 
+  const { openChat } = useTawk();
+  const onLiveChat = () => {
+    // showChatWidget();
+    if(!storeUser.isLogin){
+      openLoginDialog();
+      return ;
+    }
+    openChat()
+  };
+
+
+
   const { router, storeUser, onCopy } = useVariable();
   const snackbar = useSnackbar();
-  const emit = defineEmits(["update:modelValue", "select", "leave"]);
+  const emit = defineEmits(["update:modelValue", "select", "leave",]);
+
+  const onUnlock = () => {
+    console.log('onUnlock')
+    emit('select')
+  }
+
   const isVisible = computed({
     get: () => props.modelValue,
     set: (v) => emit("update:modelValue", v),
@@ -77,7 +98,7 @@
         幕，血腥战场，新冠真相，真实奸杀，封杀事件 累计资源超300W部视频
       </div>
 
-      <div class="d-flex flex-column my-3">
+      <!-- <div class="d-flex flex-column my-3">
         <div class="text-center text- text-subtitle-1">
           分享邀请
           <strong class="text-error">3</strong>
@@ -86,11 +107,34 @@
           个好友加注册
         </div>
         <div class="text-center text-subtitle-2">可解锁全站视频无限观看</div>
-      </div>
-
+      </div> -->
+      <v-card-actions>
+        <v-row>
+          <v-btn
+              size="large"
+              color="primary"
+              block
+              rounded="xl"
+              variant="elevated"
+              @click="onLiveChat"
+            >
+              联系客服解锁权限
+          </v-btn>
+        </v-row>
+      </v-card-actions>
       <v-card-actions>
         <v-row dense>
-          <v-col cols="6">
+          <v-btn
+              size="large"
+              color="info"
+              block
+              rounded="xl"
+              variant="elevated"
+              @click="onUnlock"
+            >
+              解锁观看
+          </v-btn>
+          <!-- <v-col cols="6">
             <v-btn
               color="primary"
               block
@@ -121,7 +165,7 @@
             >
               立即邀请
             </v-btn>
-          </v-col>
+          </v-col> -->
         </v-row>
       </v-card-actions>
     </v-card-text>

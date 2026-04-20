@@ -6,6 +6,8 @@
   import { useNoteForbidden } from "@/hooks/useNoteForbiddenDialog";
   import { select, getCategories } from "@/service/forbidden";
   import ForbiddenRuleDialog from "@/components/forbidden/RuleDialog.vue";
+  import {verifyAuth} from "@/service/user"
+  import { openLoginDialog } from "@/hooks/useLoginDialog";
 
   const state = reactive({
     data: [] as EmptyArrayType,
@@ -38,6 +40,8 @@
     }
   };
 
+
+
   /* ---------------------------
    2. Centralized fetch function
 ---------------------------- */
@@ -54,6 +58,7 @@
         request.cid = state.cid;
       }
       const response: EmptyObjectType = await select(request);
+      // console.log('forbidden response : ', response)
       state.total = response?.data?.count || 0;
       state.statusCode = response?.errcode ?? null;
       const newItems = response.data?.items?.map((item: EmptyObjectType) => ({
@@ -114,14 +119,33 @@
     noteDialog.openNoteDialog(item.id);
   };
 
+
+  const ShowDialog = ref(true)
+
   // rule overlay logic
-  const shouldShowRuleDialog = computed(
-    () => !storeUser.isLogin || (storeUser.userInfo?.invite_count ?? 0) < 5
-  );
+  // const shouldShowRuleDialog = computed(
+  //   // () => !storeUser.isLogin || (storeUser.userInfo?.invite_count ?? 0) < 5
+  // );
+  
   const isVisible = computed({
-    get: () => shouldShowRuleDialog.value,
+    get: () =>  ShowDialog.value,
     set: () => (storeUser.isLogin ? false : false),
   });
+
+  const showAlert = ref(false)
+  const unlockHandler = async () => {
+    if(!storeUser.isLogin){
+        openLoginDialog()
+        return 
+    }
+    const resp = await verifyAuth(0,'jinqu');
+    if (resp.data){
+      ShowDialog.value = false;
+      onCategoryChange()
+    }else{
+      showAlert.value = true
+    }
+  }
 
   watch(
     () => state.statusCode,
@@ -156,6 +180,13 @@
   });
 </script>
 <template>
+  <v-alert
+    v-model="showAlert"
+    type="warning"
+    title="权限警告"
+    text="您没有权限 请联系客服开通权限"
+    closable
+  ></v-alert>
   <v-container
     class="d-flex flex-column pa-0"
     fluid
@@ -254,7 +285,7 @@
           :opacity="0.95"
           persistent
         >
-          <ForbiddenRuleDialog />
+          <ForbiddenRuleDialog @select="unlockHandler"/>
         </v-overlay>
       </v-card-text>
     </v-card>
