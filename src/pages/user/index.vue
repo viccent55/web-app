@@ -14,6 +14,8 @@
   import UserDialogInvites from "@/components/user/DialogInvites.vue";
   import UserFollowings from "@/components/user/Followings.vue";
   import GroupCenter from "@/components/user/GroupCenter.vue";
+      import { useTawk } from "@/composables/useTawk";
+  const { openChat } = useTawk();
 
   const UserInfo = defineAsyncComponent(
     () => import("@/components/user/UserInfo.vue")
@@ -136,7 +138,7 @@
   const followRef = useTemplateRef("followings");
   const onClickMenu = async (item: EmptyObjectType) => {
     if (item.value == "call") {
-      return showChatWidget();
+      return openChat();
     } else if (item.value == "invite") {
       return inviteRef.value?.open();
     } else if (item.value === "follow") {
@@ -386,7 +388,7 @@
       </v-dialog>
       <UserDialogAI
         ref="dialog-ai"
-        @close="showChatWidget()"
+        @close="openChat()"
       ></UserDialogAI>
       <UserPersonalNote ref="popup-data" />
       <UserDialogInvites
